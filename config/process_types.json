@@ -1,0 +1,45 @@
+{
+  "$comment": "MVP kapsamındaki işlem türleri. Web (Prisma seed) ve API (sınıflandırma) bu dosyayı ortak kaynak olarak kullanır.",
+  "process_types": [
+    {
+      "code": "miras_arac_devri",
+      "name": "Miras yoluyla araç devri",
+      "description": "Vefat eden kişinin adına kayıtlı aracın mirasçılara veya bir mirasçıya devri."
+    },
+    {
+      "code": "ikinci_el_arac_devri",
+      "name": "İkinci el araç alım-satım devri",
+      "description": "İkinci el bir aracın satıcıdan alıcıya devri ve tescili."
+    },
+    {
+      "code": "pasaport",
+      "name": "Pasaport başvurusu ve yenileme",
+      "description": "İlk kez pasaport başvurusu veya süresi dolan pasaportun yenilenmesi."
+    },
+    {
+      "code": "imei_kayit",
+      "name": "Yurt dışından getirilen telefonun IMEI kaydı",
+      "description": "Yurt dışından getirilen cep telefonunun IMEI numarasının kayıt altına alınması."
+    },
+    {
+      "code": "yerlesim_yeri_belgesi",
+      "name": "İkametgâh / yerleşim yeri belgesi",
+      "description": "Yerleşim yeri (ikametgâh) belgesinin alınması."
+    },
+    {
+      "code": "kimlik_karti_yenileme",
+      "name": "Kimlik kartı yenileme",
+      "description": "Kimlik kartının yenilenmesi veya eski tip nüfus cüzdanının değiştirilmesi."
+    },
+    {
+      "code": "mirascilik_belgesi",
+      "name": "Mirasçılık belgesi (veraset ilamı)",
+      "description": "Mirasçılık belgesinin noterden veya sulh hukuk mahkemesinden alınması."
+    },
+    {
+      "code": "ehliyet_yenileme",
+      "name": "Ehliyet yenileme / değişimi",
+      "description": "Sürücü belgesinin yenilenmesi veya eski tip belgenin yeni tip belgeyle değiştirilmesi."
+    }
+  ]
+}

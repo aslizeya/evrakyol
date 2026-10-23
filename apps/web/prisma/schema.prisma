@@ -1,0 +1,175 @@
+// Evrakyol uygulama şeması.
+// Bu dosya yalnızca Postgres'teki `app` şemasını yönetir.
+// Kaynaklar ve metin parçaları (`kb` şeması) Python servisindeki Alembic tarafından yönetilir.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  schemas  = ["app"]
+}
+
+enum Role {
+  USER
+  ADMIN
+
+  @@schema("app")
+}
+
+enum ProcessStatus {
+  ACTIVE
+  COMPLETED
+  ARCHIVED
+
+  @@schema("app")
+}
+
+enum FeedbackType {
+  OUTDATED // Bilgi güncel değil
+  INCORRECT // Bilgi yanlış
+  OTHER
+
+  @@schema("app")
+}
+
+enum FeedbackStatus {
+  OPEN
+  REVIEWING
+  RESOLVED
+  REJECTED
+
+  @@schema("app")
+}
+
+// --- Kullanıcılar ve Auth.js tabloları ---
+// Alan adları @auth/prisma-adapter'ın beklediği adlarla aynıdır.
+
+model User {
+  id            String        @id @default(cuid())
+  email         String        @unique
+  name          String?
+  emailVerified DateTime?     @map("email_verified")
+  image         String?
+  role          Role          @default(USER)
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @updatedAt @map("updated_at")
+  accounts      Account[]
+  sessions      Session[]
+  processes     UserProcess[]
+
+  @@map("users")
+  @@schema("app")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String  @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+  @@map("accounts")
+  @@schema("app")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("sessions")
+  @@schema("app")
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+  @@map("verification_tokens")
+  @@schema("app")
+}
+
+// --- Ürün tabloları ---
+
+// Kaynak: config/process_types.json (prisma/seed.ts ile yüklenir)
+model ProcessType {
+  id          Int           @id @default(autoincrement())
+  code        String        @unique
+  name        String
+  description String
+  active      Boolean       @default(true)
+  processes   UserProcess[]
+
+  @@map("process_types")
+  @@schema("app")
+}
+
+model UserProcess {
+  id            String         @id @default(cuid())
+  userId        String         @map("user_id")
+  processTypeId Int            @map("process_type_id")
+  // Kullanıcının yazdığı metin. Kişisel veriler (T.C. kimlik no, plaka, adres...) kaydedilmeden önce maskelenir.
+  userInput     String         @map("user_input")
+  // Netleştirici sorulara verilen cevaplar (işlem türüne özgü alanlar)
+  answers       Json?
+  // RAG hattının ürettiği, şemaya uygun yol haritası JSON'u
+  roadmap       Json
+  status        ProcessStatus  @default(ACTIVE)
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  processType   ProcessType    @relation(fields: [processTypeId], references: [id])
+  steps         StepProgress[]
+  feedback      Feedback[]
+
+  @@index([userId, status])
+  @@map("user_processes")
+  @@schema("app")
+}
+
+model StepProgress {
+  id            String      @id @default(cuid())
+  userProcessId String      @map("user_process_id")
+  stepOrder     Int         @map("step_order")
+  completed     Boolean     @default(false)
+  completedAt   DateTime?   @map("completed_at")
+  userProcess   UserProcess @relation(fields: [userProcessId], references: [id], onDelete: Cascade)
+
+  @@unique([userProcessId, stepOrder])
+  @@map("step_progress")
+  @@schema("app")
+}
+
+model Feedback {
+  id            String         @id @default(cuid())
+  userProcessId String         @map("user_process_id")
+  stepOrder     Int?           @map("step_order")
+  type          FeedbackType
+  description   String?
+  status        FeedbackStatus @default(OPEN)
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
+  userProcess   UserProcess    @relation(fields: [userProcessId], references: [id], onDelete: Cascade)
+
+  @@index([status, createdAt])
+  @@map("feedback")
+  @@schema("app")
+}

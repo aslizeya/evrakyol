@@ -1,0 +1,27 @@
+# Ortam değişkenleri (gizli anahtarlar asla commit edilmez)
+.env
+.env.*
+!.env.example
+
+# Node
+node_modules/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# Model önbelleği (embedding modelleri)
+.models/
+
+# Değerlendirme çıktılarının geçici dosyaları
+eval/.tmp/
+
+# İşletim sistemi / editör
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

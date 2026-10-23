@@ -1,0 +1,14 @@
+**/node_modules
+**/.next
+**/.venv
+**/__pycache__
+**/.pytest_cache
+**/.ruff_cache
+**/src/generated
+.git
+.github
+.env
+.env.*
+!.env.example
+eval
+docs
