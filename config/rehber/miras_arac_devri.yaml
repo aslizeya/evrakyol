@@ -23,7 +23,18 @@ sorular:
   - anahtar: tescil_tercihi
     sor_eger:
       mirasci_sayisi: [Birden fazla mirasçı, Bilmiyorum]
+  - anahtar: basvuru_sekli
+    sor_eger:
+      mirasci_sayisi: [Birden fazla mirasçı, Bilmiyorum]
+      tescil_tercihi: [Tüm mirasçılar adına, Mirasçılardan biri adına, Henüz karar verilmedi]
   - anahtar: kisitlama
+  - anahtar: beyanname_verildi
+  - anahtar: vefat_ve_mirasci_yeri
+    sor_eger:
+      beyanname_verildi: [Hayır, Bilmiyorum]
+  - anahtar: buyuksehir
+    sor_eger:
+      beyanname_verildi: [Hayır, Bilmiyorum]
 
 adimlar:
   - id: mirascilik_belgesi_alin
@@ -53,13 +64,14 @@ adimlar:
         alinti: Mirasçılık Belgesi sistem tarafından yaklaşık üç dakika içerisinde hazırlanacaktır.
 
   - id: veraset_beyannamesi
+    goster_eger:
+      beyanname_verildi: [Hayır, Bilmiyorum]
     baslik: Veraset ve intikal vergisi beyannamesini verin
     aciklama: >-
       Beyanname, miras kalan mal istisna tutarının altında kalsa bile verilmelidir. Ölenin
       ikametgâhının bulunduğu yerdeki vergi dairesine kâğıt ortamında elden veya posta yoluyla
-      verilir; mirasçılar ayrı ayrı ya da birlikte verebilir. Ölüm Türkiye'de olduysa ve
-      mirasçılar Türkiye'deyse süre, ölüm tarihini takip eden 4 aydır. Ölenin ikametgâhı Ankara,
-      İstanbul veya İzmir'deyse defterdarlık sitesinden randevu alınır.
+      verilir; mirasçılar ayrı ayrı ya da birlikte verebilir. Birlikte verilirse beyannameyi her
+      mirasçı ayrı ayrı imzalar.
     gerekli_evraklar:
       - Veraset ilamı (mirasçılık belgesi)
       - Vefat eden kişinin son ikametgâhını gösteren nüfus kayıt belgesi
@@ -82,15 +94,11 @@ adimlar:
           verilebileceği gibi müştereken verilmesi de mümkündür.
       - kaynak: *gib
         alinti: >-
+          Beyannamenin müştereken verilmesi halinde, beyannamenin her mükellef tarafından ayrı
+          ayrı imzalanmış olması gerekir.
+      - kaynak: *gib
+        alinti: >-
           Veraset yoluyla gerçekleşen intikallerde ölen kimsenin ikametgâhının bulunduğu
-      - kaynak: *gib
-        alinti: >-
-          Mükellefler Türkiye’de bulunuyorsa ölüm tarihini takip eden 4 ay içinde
-      - kaynak: *gib
-        alinti: >-
-          Vefat eden kişinin ikametgâhı Ankara, İstanbul ve İzmir illerinde bulunuyorsa ilgili
-          illerin defterdarlık web sitelerinde yer alan veraset işlemleri randevu başlığından
-          randevu almak suretiyle
       - kaynak: *gib
         alinti: >-
           Veraset ilamı (mirasçılık belgesi), • Nüfus kayıt sisteminden alınan vefat eden kişinin
@@ -192,6 +200,68 @@ adimlar:
           plakasına da tescil edilebilmesi mümkündür.
 
 uyarilar:
+  - goster_eger:
+      vefat_ve_mirasci_yeri: ["Vefat Türkiye'de, mirasçılar Türkiye'de"]
+    metin: "Beyanname süresi: ölüm tarihini takip eden 4 ay."
+    dayanaklar:
+      - kaynak: *gib
+        alinti: >-
+          Ölüm Türkiye’de meydana gelmiş ise; • Mükellefler Türkiye’de bulunuyorsa ölüm tarihini
+          takip eden 4 ay içinde
+  - goster_eger:
+      vefat_ve_mirasci_yeri: ["Vefat Türkiye'de, mirasçılar yurt dışında"]
+    metin: "Beyanname süresi: ölüm tarihini takip eden 6 ay."
+    dayanaklar:
+      - kaynak: *gib
+        alinti: >-
+          Mükellefler yabancı bir memlekette bulunuyorsa ölüm tarihini takip eden 6 ay içinde, •
+          Ölüm yabancı bir memlekette meydana gelmiş ise
+  - goster_eger:
+      vefat_ve_mirasci_yeri: ["Vefat yurt dışında, mirasçılar Türkiye'de"]
+    metin: "Beyanname süresi: ölüm tarihini takip eden 6 ay."
+    dayanaklar:
+      - kaynak: *gib
+        alinti: >-
+          Ölüm yabancı bir memlekette meydana gelmiş ise; • Mükellefler Türkiye’de bulunuyorsa
+          ölüm tarihini takip eden 6 ay içinde
+  - goster_eger:
+      vefat_ve_mirasci_yeri: ["Vefat yurt dışında, mirasçılar vefatın olduğu ülkede"]
+    metin: "Beyanname süresi: ölüm tarihini takip eden 4 ay."
+    dayanaklar:
+      - kaynak: *gib
+        alinti: >-
+          Mükellefler ölenin bulunduğu memlekette bulunuyorsa ölüm tarihini takip eden 4 ay içinde
+  - goster_eger:
+      vefat_ve_mirasci_yeri: ["Vefat yurt dışında, mirasçılar başka bir ülkede"]
+    metin: "Beyanname süresi: ölüm tarihini takip eden 8 ay."
+    dayanaklar:
+      - kaynak: *gib
+        alinti: >-
+          Mükellefler ölenin bulunduğu memleketin dışında başka bir yabancı memlekette
+          bulunuyorsa ölüm tarihini takip eden 8 ay içinde
+  - goster_eger:
+      buyuksehir: [Evet]
+    metin: >-
+      Ölenin ikametgâhı Ankara, İstanbul veya İzmir'de olduğu için beyanname, ilgili ilin
+      defterdarlık web sitesindeki "veraset işlemleri randevu" başlığından randevu alınarak, randevu
+      tarihinde belgelerle birlikte vergi dairesine verilir.
+    dayanaklar:
+      - kaynak: *gib
+        alinti: >-
+          Vefat eden kişinin ikametgâhı Ankara, İstanbul ve İzmir illerinde bulunuyorsa ilgili
+          illerin defterdarlık web sitelerinde yer alan veraset işlemleri randevu başlığından
+          randevu almak suretiyle randevu alınan tarihte ilgili belge ve evraklarla beyanname
+          formu kağıt ortamında ilgili vergi dairesine verilir.
+  - goster_eger:
+      basvuru_sekli: ["Hayır, vekâlet verilecek"]
+    metin: >-
+      Tüm varisler başvuruya gidemiyorsa vekâlet verebilir; bu durumda tescil kuruluşuna vekiller
+      başvurabilir.
+    dayanaklar:
+      - kaynak: *egm
+        alinti: >-
+          Trafik tescil kuruluşuna tüm varisler müracaat edebileceği gibi, vekalet vermeleri
+          halinde vekilleri de müracaat edebilirler.
   - metin: >-
       Mirasçılar, vefat tarihinden itibaren 90 gün içinde tescil kuruluşuna başvurup adlarına
       tescil belgesi almak zorundadır. Bu süre sonunda mirasçılar adına tescil edilmeden

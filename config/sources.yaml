@@ -98,3 +98,39 @@ sources:
     options:
       legislation: true
       articles: ["19-20"]
+
+  # --- Nüfus ve Vatandaşlık İşleri: kimlik kartı, pasaport, sürücü belgesi, adres ---
+  - url: https://www.nvi.gov.tr/sss-kimlik-karti
+    institution: Nüfus ve Vatandaşlık İşleri Genel Müdürlüğü
+    title: T.C. Kimlik Kartı Sıkça Sorulan Sorular
+    process_codes: [kimlik_karti_yenileme]
+
+  - url: https://www.nvi.gov.tr/pasaport
+    institution: Nüfus ve Vatandaşlık İşleri Genel Müdürlüğü
+    title: Pasaport Hizmetleri
+    process_codes: [pasaport]
+
+  - url: https://www.nvi.gov.tr/sss-pasaport-hizmetleri
+    institution: Nüfus ve Vatandaşlık İşleri Genel Müdürlüğü
+    title: Pasaport Hizmetleri Sıkça Sorulan Sorular
+    process_codes: [pasaport]
+
+  - url: https://www.nvi.gov.tr/surucu-belgeleri
+    institution: Nüfus ve Vatandaşlık İşleri Genel Müdürlüğü
+    title: Sürücü Belgeleri Hizmetleri
+    process_codes: [ehliyet_yenileme]
+
+  - url: https://www.nvi.gov.tr/sss-surucu-belgeleri-hizmetleri
+    institution: Nüfus ve Vatandaşlık İşleri Genel Müdürlüğü
+    title: Sürücü Belgeleri Hizmetleri Sıkça Sorulan Sorular
+    process_codes: [ehliyet_yenileme]
+
+  - url: https://www.nvi.gov.tr/sss-adres-hizmetleri
+    institution: Nüfus ve Vatandaşlık İşleri Genel Müdürlüğü
+    title: Adres Hizmetleri Sıkça Sorulan Sorular
+    process_codes: [yerlesim_yeri_belgesi]
+
+  - url: https://www.nvi.gov.tr/adres-hizmetleri
+    institution: Nüfus ve Vatandaşlık İşleri Genel Müdürlüğü
+    title: Adres Hizmetleri
+    process_codes: [yerlesim_yeri_belgesi]

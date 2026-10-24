@@ -1,0 +1,248 @@
+# Sorularla ilerleyen rehber: Ehliyet (sürücü belgesi) yenileme / değişimi
+# Kurallar için bkz. miras_arac_devri.yaml başındaki açıklama.
+
+islem: ehliyet_yenileme
+onaylandi: false
+ozet: >-
+  Sürücü belgesi yenileme başvurusu, randevu alınarak nüfus müdürlüğüne şahsen yapılır. Sağlık
+  raporu ve ödenmiş değerli kâğıt bedeli ile vakıf payı gerekir; yeni belge PTT ile adrese
+  gönderilir.
+
+sorular:
+  - anahtar: ehliyet_nedeni
+  - anahtar: saglik_raporu
+
+adimlar:
+  - id: saglik_raporu
+    goster_eger:
+      saglik_raporu: [Yok, Bilmiyorum]
+    baslik: Sürücü sağlık raporu alın
+    aciklama: >-
+      Sağlık raporu Sağlık Bakanlığınca yetkilendirilen sağlık kuruluşlarından alınır. Raporda
+      aksine bir tarih belirtilmemişse rapor 2 yıl geçerlidir.
+    gerekli_evraklar: []
+    kurum: Sağlık Bakanlığınca yetkilendirilen sağlık kuruluşu
+    dayanaklar:
+      - kaynak: &sss https://www.nvi.gov.tr/sss-surucu-belgeleri-hizmetleri
+        alinti: >-
+          Sağlık raporları, Sağlık Bakanlığınca yetkilendirilen sağlık kuruluşlarından alınabilir.
+      - kaynak: *sss
+        alinti: >-
+          Sağlık kurulu raporlarında hekimlerce veya ilgili mevzuatında aksine bir tarih
+          belirtilmediği durumlarda raporlar 2 (iki) yıl geçerlidir.
+
+  - id: ucretler
+    baslik: Değerli kâğıt bedeli ve vakıf payını ödeyin
+    aciklama: >-
+      Tutarlar ve ödeme yapılabilecek banka hesapları randevu.nvi.gov.tr/pages/applicationprices
+      adresinde yer alır. Değerli kâğıt ve harç bedelleri Maliye veznelerine, anlaşmalı bankalara
+      ve PTT şubelerine; vakıf payı Türk Polis Teşkilatının protokol yaptığı bankalara yatırılır.
+      Ödemeler başvuru sırasında sistemden kontrol edilir.
+    kurum: Anlaşmalı banka, PTT veya Maliye veznesi
+    dayanaklar:
+      - kaynak: &sb https://www.nvi.gov.tr/surucu-belgeleri
+        alinti: >-
+          Sürücü belgesi harç, değerli kağıt ve vakıf ücreti tutarları ile ödenebilecek banka
+          hesaplarına https://randevu.nvi.gov.tr/pages/applicationprices web adresinden
+          ulaşılabilir.
+      - kaynak: *sss
+        alinti: >-
+          Değerli kâğıt ve harç bedelleri; • Maliye Bakanlığı vezneleri, anlaşmalı bankalar ve PTT
+          şubelerine, Vakıf payı; • Türk Polis Teşkilatının protokol yaptığı bankalara yatırılır.
+
+  - id: randevu
+    baslik: Randevu alın
+    aciklama: >-
+      Randevu randevu.nvi.gov.tr, e-Devlet, NVİ Mobil, Nüfusmatik veya Alo 199 üzerinden alınır.
+      Başvuru, yetkilendirilmiş 983 ilçe nüfus müdürlüğünden birine veya Nüfusmatik aracılığıyla
+      yapılabilir. Randevu saatinden 30 dakika önce ile 60 dakika sonrası arasında sıra alınabilir;
+      60 dakikayı geçirenlerin başvurusu alınmaz.
+    kurum: İlçe nüfus müdürlüğü
+    dayanaklar:
+      - kaynak: *sss
+        alinti: >-
+          Sürücü belgesi randevuları, randevu.nvi.gov.tr internet adresi, e-Devlet kapısı, NVİ
+          Mobil, Nüfusmatik ya da Çağrı Merkezi (Alo 199) üzerinden alınabilmektedir
+      - kaynak: *sss
+        alinti: >-
+          Sürücü belgesi başvuruları Genel Müdürlüğümüzce belirlenen 983 ilçe nüfus
+          müdürlüğünde, dış temsilciliklerimizde ve nüfusmatik aracılığı ile yapılabilmektedir.
+      - kaynak: *sss
+        alinti: >-
+          Randevu saatinizin 30 dakika öncesinden 60 dakika sonrasına kadar sıra alabilirsiniz. 60
+          dakika geçiren kişilerin başvuruları alınamamaktadır.
+
+  - id: belgeler_yenileme
+    goster_eger:
+      ehliyet_nedeni:
+        - Süresi doldu, yenileyeceğim
+        - Eski tip belgemi yeni tiple değiştireceğim
+        - Belgem kayboldu veya çalındı
+        - Kimlik bilgilerim değişti
+    baslik: Yenileme için belgeleri hazırlayın
+    aciklama: >-
+      Ödemeler ve adli sicil kaydı başvuru sırasında sistemden kontrol edilir. Kayıp veya
+      çalıntı değilse mevcut sürücü belgesi getirilir.
+    gerekli_evraklar:
+      - Kimlik belgesi
+      - Kayıp veya çalıntı değilse mevcut sürücü belgesi
+      - Sürücü sağlık raporu
+      - Son altı ay içinde çekilmiş 1 adet biyometrik fotoğraf
+      - Kan grubunu belirten belge veya sözlü/yazılı beyan
+    kurum: İlçe nüfus müdürlüğü
+    dayanaklar:
+      - kaynak: *sss
+        alinti: >-
+          Sürücü belgesinin kayıp/çalıntı, yıpranma, kimlik bilgilerinde değişiklik vb. nedenlerle
+          yenilenmesi işleminde ibraz edilecek ve/veya elektronik ortamda kontrol edilecek
+          bilgiler/belgeler. a) Kimlik belgesi b) Kayıp/çalıntı değilse mevcut sürücü belgesi c)
+          Sürücü sağlık raporu ç) Sürücü belgesi değerli kâğıt bedeli ve vakıf payı (Elektronik
+          ortamda sistemden kontrol edilmektedir.) d) 1 (bir) adet biyometrik fotoğraf (Son altı ay
+          içinde çekilmiş) e) Kan gurubunu belirtir belge veya sözlü\yazılı beyan f) Adli Sicil
+          Kaydı Belgesi (Elektronik ortamda sistemden kontrol edilmektedir.)
+
+  - id: belgeler_yurtdisi
+    goster_eger:
+      ehliyet_nedeni: [Yurt dışından aldığım belgeyi değiştireceğim]
+    baslik: Yabancı belgeyi değiştirmek için belgeleri hazırlayın
+    aciklama: >-
+      Ödemeler ve adli sicil kaydı başvuru sırasında sistemden kontrol edilir.
+    gerekli_evraklar:
+      - Yabancı sürücü belgesinin aslı ve renkli fotokopisi
+      - Noter veya konsolosluk onaylı Türkçe tercümesi
+      - Kimlik belgesi
+      - Sürücü sağlık raporu
+      - Son altı ay içinde çekilmiş 1 adet biyometrik fotoğraf
+      - Kan grubunu belirten belge veya yazılı beyan
+      - Öğrenim belgesi (yurt dışından alındıysa noter tasdikli tercümesi)
+    kurum: İlçe nüfus müdürlüğü
+    dayanaklar:
+      - kaynak: *sss
+        alinti: >-
+          Dış Ülkelerden Alınan Sürücü Belgesi Değiştirme İşlemlerinde İstenilen kontrol edilecek
+          bilgiler/belgeler. • Yabancı sürücü belgesinin aslı ve renkli fotokopisi • Noter veya
+          konsolosluk onaylı Türkçe tercümesi • Kimlik belgesi • Sürücü sağlık raporu • Sürücü
+          belgesi değerli kâğıt ve harç bedeli, vakıf payı (Elektronik ortamda sistemden kontrol
+          edilmektedir.) • 1 (bir) adet biyometrik fotoğraf (Son altı ay içinde çekilmiş) • Kan
+          grubunu belirtir belge veya yazılı beyan • Öğrenim belgesi, yurtdışından alınan öğrenim
+          belgelerinin noter tasdikli tercümesi
+
+  - id: sahsen_basvuru
+    baslik: Randevu gününde şahsen başvurun
+    aciklama: >-
+      Sürücü belgesi başvurusunu kişinin kendisi yapar; başvuru ve teslimde vekâletle işlem
+      yapılmaz. Fotoğraf son altı ay içinde çekilmiş ve biyometrik olmalıdır.
+    kurum: İlçe nüfus müdürlüğü
+    dayanaklar:
+      - kaynak: *sss
+        alinti: >-
+          Sürücü belgesi müracaatlarının bizzat şahsın kendisi tarafından yapılması
+          gerekmektedir.
+      - kaynak: *sss
+        alinti: Sürücü belgesi başvuru ve teslimlerinde vekalet ile işlem yapılmamaktadır.
+      - kaynak: *sss
+        alinti: >-
+          son altı ay içinde çekilmiş ve Uluslararası Sivil Havacılık Teşkilatı (ICAO) tarafından
+          belirlenen standartlara uygun olarak biyometrik olması gereklidir.
+
+  - id: teslim
+    baslik: Yeni belgenizi teslim alın
+    aciklama: >-
+      Sorun çıkmazsa belge üretilip başvuruda belirtilen adrese PTT güvenli taşıma hizmetiyle
+      gönderilir; gönderim için ücret ödenmez. Teslim alırken kimlik bilgileri ve sınıf
+      bilgilerinin doğruluğu kontrol edilmelidir.
+    kurum: PTT
+    dayanaklar:
+      - kaynak: *sss
+        alinti: >-
+          sürücü belgesi üretilerek, başvuru esnasında belirtilen adres ve kişiye/kişilere PTT
+          güvenli taşıma hizmetiyle teslim edilir.
+      - kaynak: *sss
+        alinti: >-
+          PTT tarafından adrese gönderilen sürücü belgeleri için her hangi bir ücret ödemeniz
+          gerekmemektedir.
+      - kaynak: *sss
+        alinti: >-
+          Sürücü belgesi teslim aldığında sürücü belgesi kimlik bilgileri, sınıf ve diğer
+          bilgilerinin doğruluğunun kontrol edilmesi gerekmektedir.
+
+uyarilar:
+  - metin: >-
+      C1, C1E, C, CE, D1, D1E, D ve DE sınıfı belgeler 5 yıl; M, A1, A2, A, B1, B, BE, F ve G
+      sınıfı belgeler 10 yıl geçerlidir. Sürenin bitimini izleyen tarihten itibaren belge geçersiz
+      sayılır.
+    dayanaklar:
+      - kaynak: *sb
+        alinti: >-
+          C1,C1E,C,CE,D1,D1E,D ve DE sınıfı sürücü belgeleri 5 yıl, M, A1,A2,A,B1,B,BE, F ve G
+          sınıfı sürücü belgeleri 10 yıl geçerlidir. Sürenin bitimini izleyen tarihten itibaren
+          sürücü belgeleri geçersiz sayılır.
+  - goster_eger:
+      ehliyet_nedeni: ["Süresi doldu, yenileyeceğim"]
+    metin: >-
+      01.01.2016'da düzenlenen B sınıfı yeni tip belgeler 01.01.2026 itibarıyla geçerliliğini
+      kaybetti. Bu belgeler 2026 yılı için 1.690 TL değerli kâğıt bedeli ve 425 TL vakıf payı
+      (toplam 2.115 TL) karşılığında yenilenir. Süresi biten belgeyle araç kullananlara 2026 yılı
+      için 4.712 TL idari para cezası uygulanır ve belge geri alınır.
+    dayanaklar:
+      - kaynak: *sss
+        alinti: >-
+          01.01.2016 tarihinde düzenlenen B sınıfı yeni tip sürücü belgesi 01.01.2026 tarihi
+          itibarıyla geçerliliğini kaybetmiştir. Söz konusu belgeler 1.690 TL değerli kâğıt
+          bedeli, 425 TL vakıf payı (2026 yılı için toplam ücret 2.115 TL) karşılığında
+          yenilenmektedir.
+      - kaynak: *sss
+        alinti: >-
+          2026 yılı itibariyle 4.712 TL idari para cezası uygulanıp sürücü belgeleri geri
+          alınmaktadır.
+  - goster_eger:
+      ehliyet_nedeni: [Eski tip belgemi yeni tiple değiştireceğim]
+    metin: >-
+      Eski tip sürücü belgeleri Kasım 2025 itibarıyla geçerliliğini kaybetti; bu belgelerle araç
+      kullananların belgesi geri alınır. Eski tip belgeler, o yıl için belirlenen harçlar,
+      indirimsiz değerli kâğıt bedeli ve vakıf payı ödenerek herhangi bir il/ilçe nüfus
+      müdürlüğünde yenilenir.
+    dayanaklar:
+      - kaynak: *sss
+        alinti: >-
+          Kasım 2025 tarihi itibarıyla eski tip sürücü belgeleri geçerliliğini kaybetmiş olup bu
+          tarihten sonra söz konusu belgelerle araç kullanan şahıslara 2918 sayılı Karayolları
+          Trafik Kanunu’nun 39/3 maddesi uyarınca işlem yapılmakta ve sürücü belgeleri geri
+          alınmaktadır.
+      - kaynak: *sss
+        alinti: >-
+          herhangi bir İl/İlçe nüfus müdürlüğüne veya yurtdışında Dışişleri Bakanlığınca
+          belirlenen dış temsilciliklerimize müracaat ederek eski tip sürücü belgelerini sürücü
+          belgesi sınıflarına ait bu yıl için belirlenen gerekli harçlar, indirimsiz değerli kağıt
+          bedeli ile vakıf payını ödemeleri suretiyle yenilemeleri gerekmektedir.
+  - goster_eger:
+      ehliyet_nedeni: [Belgem kayboldu veya çalındı]
+    metin: >-
+      Kayıp veya çalıntı nedeniyle yenilemede de değerli kâğıt bedeli ve vakıf payı ödenir.
+    dayanaklar:
+      - kaynak: *sss
+        alinti: >-
+          Sürücü belgeleri kayıp veya çalıntı durumunda yenileniyor olsa bile değerli kâğıt ve
+          vakıf payı bedeli ödeme zorunluluğu vardır.
+  - goster_eger:
+      ehliyet_nedeni: [Kimlik bilgilerim değişti]
+    metin: >-
+      Ad, soyadı gibi kişisel bilgiler değiştiğinde değerli kâğıt ve vakıf payı bedelleri
+      yatırılarak sürücü belgesi yenilenmelidir.
+    dayanaklar:
+      - kaynak: *sss
+        alinti: >-
+          Ad, soyadı gibi kişisel bilgilerde değişiklik olması halinde değerli kâğıt ve vakıf payı
+          bedelleri yatırılarak sürücü belgesi yenilenmelidir.
+  - goster_eger:
+      ehliyet_nedeni: [Yurt dışından aldığım belgeyi değiştireceğim]
+    metin: >-
+      Yurt dışından alınan sürücü belgesiyle Türk vatandaşları 2 yıl araç kullanabilir; bu sürenin
+      sonunda Türkiye'den sürücü belgesi alınması gerekir.
+    dayanaklar:
+      - kaynak: *sb
+        alinti: >-
+          01.01.2016 tarihinden itibaren yurtdışından alınan sürücü belgesiyle; Türk vatandaşları
+          2 yıl, yabancılar ise 6 ay süreyle ülkemiz sınırları içerisinde araç
+          kullanabilmektedirler. Bu sürenin sonunda ülkemizde araç kullanabilmeniz için sürücü
+          belgesi almanız gerekmektedir.

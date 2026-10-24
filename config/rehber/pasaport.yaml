@@ -1,0 +1,363 @@
+# Sorularla ilerleyen rehber: Pasaport başvurusu ve yenileme
+# Kurallar için bkz. miras_arac_devri.yaml başındaki açıklama.
+
+islem: pasaport
+onaylandi: false
+ozet: >-
+  Pasaport başvurusu randevu alınarak nüfus müdürlüğüne şahsen yapılır. Pasaport türüne göre
+  istenen belgeler ve ödenecek bedeller değişir; pasaport basımdan sonra PTT ile teslim edilir.
+
+sorular:
+  - anahtar: pasaport_kimin
+  - anahtar: pasaport_turu
+  - anahtar: ogrenci
+    sor_eger:
+      pasaport_turu: [Umuma mahsus (bordo), Bilmiyorum]
+  - anahtar: eski_pasaport
+  - anahtar: veli_durumu
+    sor_eger:
+      pasaport_kimin: [18 yaşından küçük bir çocuk için]
+
+adimlar:
+  - id: kayip_bildirimi
+    goster_eger:
+      eski_pasaport: [Vardı ama kayboldu]
+    baslik: Kaybolan pasaportu bildirin
+    aciklama: >-
+      Pasaportun kaybı yurt içinde il veya ilçe nüfus müdürlüğüne, yurt dışında dış temsilciliğe
+      bildirilir.
+    kurum: İl veya ilçe nüfus müdürlüğü
+    dayanaklar:
+      - kaynak: &pasaport https://www.nvi.gov.tr/pasaport
+        alinti: >-
+          Pasaportun Kaybedilmesi Halinde Yapılması Gereken İşlemler Yurtiçinde İl veya İlçe Nüfus
+          Müdürlüklerine, yurtdışında ise dış temsilciliklere bildirimde bulunulması
+          gerekmektedir.
+
+  - id: talep_formu
+    goster_eger:
+      pasaport_turu: [Hususi damgalı (yeşil), Hizmet damgalı (gri)]
+    baslik: Pasaport talep formunu temin edin
+    aciklama: >-
+      Hususi ve hizmet damgalı pasaport talep formu randevu.nvi.gov.tr üzerinden temin edilir ve
+      düzenlendiği tarihten itibaren 60 gün geçerlidir.
+    kurum: Çalıştığınız kurum (talep formu için)
+    dayanaklar:
+      - kaynak: &sss https://www.nvi.gov.tr/sss-pasaport-hizmetleri
+        alinti: >-
+          Hususi/Hizmet Damgalı Pasaport Talep Formu Nereden Temin Edilir? https://randevu.nvi.gov.tr
+          adresi üzerinden temin edilir.
+      - kaynak: *sss
+        alinti: >-
+          Hususi ve hizmet damgalı pasaport talep formu düzenlendiği tarihten itibaren altmış 60
+          (altmış) gün süre ile geçerlidir.
+
+  - id: harc_ve_defter
+    goster_eger:
+      pasaport_turu: [Umuma mahsus (bordo), Bilmiyorum]
+      ogrenci: [Hayır]
+    baslik: Pasaport defter ve harç bedelini başvurudan önce ödeyin
+    aciklama: >-
+      Güncel tutarlar randevu.nvi.gov.tr/pages/applicationprices adresinde yer alır. Ödeme vergi
+      dairesine, PTT şubelerine, anlaşmalı bankalara veya ivd.gib.gov.tr üzerinden yapılabilir.
+      Ödeme bilgileri sistemden görüntülendiği için başvuruda makbuz istenmez.
+    kurum: Vergi dairesi, PTT, anlaşmalı banka veya ivd.gib.gov.tr
+    dayanaklar:
+      - kaynak: *pasaport
+        alinti: >-
+          Pasaport defter ve harç bedeli; vergi dairesi müdürlüklerine, PTT Şubelerine, anlaşmalı
+          bankalara veya Gelir İdaresi Başkanlığına ait https://ivd.gib.gov.tr internet adresi
+          üzerinden ödenebilmektedir. (Ödeme bilgileri sistem üzerinden görüntülendiğinden
+          başvurularda ayrıca makbuz/dekont talep edilmemektedir.)
+      - kaynak: *pasaport
+        alinti: >-
+          Pasaport defter ve harç bedeli; https://randevu.nvi.gov.tr/pages/applicationprices web
+          adresinden ulaşılabilir.
+
+  - id: defter_bedeli_muaf
+    goster_eger:
+      pasaport_turu: [Hususi damgalı (yeşil), Hizmet damgalı (gri)]
+    baslik: Pasaport defter bedelini başvurudan önce ödeyin
+    aciklama: >-
+      Hususi ve hizmet damgalı pasaportlar harçtan muaftır; yalnızca defter bedeli ödenir. Ödeme
+      bilgileri sistemden görüntülendiği için başvuruda makbuz istenmez.
+    kurum: Vergi dairesi, PTT, anlaşmalı banka veya ivd.gib.gov.tr
+    dayanaklar:
+      - kaynak: *pasaport
+        alinti: >-
+          Başvuru öncesinde pasaport defter bedelinin ödenmesi (Ödeme bilgileri sistem üzerinden
+          görüntülendiğinden başvuru esnasında ayrıca makbuz/dekont talep edilmemektedir. Hususi
+          damgalı pasaportlar harçtan muaftır.)
+      - kaynak: *pasaport
+        alinti: Hususi ve Hizmet Damgalı Pasaportlar harç bedelinden muaftır.
+
+  - id: ogrenci_harcsiz
+    goster_eger:
+      ogrenci:
+        - Evet, yurt içinde öğrenciyim (25 yaşından küçük)
+        - Evet, yurt dışında öğrenciyim
+    baslik: Harçsız pasaport için öğrenci belgenizi hazırlayın
+    aciklama: >-
+      Yurt içinde öğrenimine devam edenlere 25 yaşını tamamlayana kadar, yabancı ülkelerde
+      öğrenimine devam edenlere yaş sınırı olmaksızın harçsız umuma mahsus pasaport düzenlenir.
+      Öğrenci belgesi öğrenim görülen kurumdan veya e-Devlet'ten alınabilir; sistemde öğrencilik
+      durumu doğrulanırsa belge istenmez. Öğrenimini donduranlar bu haktan yararlanamaz.
+    gerekli_evraklar:
+      - Öğrenci belgesi (sistemde doğrulanamazsa)
+    kurum: Öğrenim görülen kurum veya e-Devlet
+    dayanaklar:
+      - kaynak: *sss
+        alinti: >-
+          Yurt içinde öğrenimine devam eden öğrencilere 25 yaşının tamamlanmasına kadar, •
+          Yabancı ülkelerde öğrenimine devam edenlere yaş sınırı aranmaksızın
+      - kaynak: *sss
+        alinti: >-
+          Öğrenim görülen kurumlardan veya e-Devlet kapısı üzerinden alınabilir. (Başvuru
+          esnasında sistemde öğrencilik durumunun doğrulanması halinde belge talep
+          edilmemektedir.)
+      - kaynak: *sss
+        alinti: >-
+          Öğrenimini donduran kişiler, pasaport başvurularında öğrencilere tanınan haklardan
+          faydalanamazlar.
+
+  - id: randevu
+    baslik: Randevu alın
+    aciklama: >-
+      Randevu randevu.nvi.gov.tr, e-Devlet, NVİ Mobil, Nüfusmatik veya Alo 199 üzerinden alınır.
+      Umuma mahsus pasaport başvuruları il ve ilçe nüfus müdürlüklerine, hususi ve hizmet damgalı
+      pasaport başvuruları il nüfus ve vatandaşlık müdürlüklerine yapılır.
+    kurum: İl veya ilçe nüfus müdürlüğü
+    dayanaklar:
+      - kaynak: *sss
+        alinti: >-
+          Pasaport randevular, https://randevu.nvi.gov.tr internet adresi, e-Devlet kapısı, NVİ
+          Mobil, Nüfusmatik ya da Çağrı Merkezi (Alo 199) üzerinden alınabilmektedir.
+      - kaynak: *sss
+        alinti: >-
+          Umuma mahsus pasaportlar başvuruları il ve ilçe nüfus müdürlüklerine, , Hususi ve hizmet
+          damgalı pasaportlar başvuruları il nüfus ve vatandaşlık müdürlüklerine
+
+  - id: belgeler_umuma
+    goster_eger:
+      pasaport_turu: [Umuma mahsus (bordo), Bilmiyorum]
+    baslik: Umuma mahsus pasaport için belgeleri hazırlayın
+    aciklama: >-
+      Fotoğraf son altı ay içinde çekilmiş, 50 mm x 60 mm ebadında ve biyometrik olmalıdır;
+      fotokopi veya bilgisayarda çoğaltılmış fotoğraf kabul edilmez. Daha önce alınmış ve iptal
+      edilmemiş pasaport başvuruda getirilir.
+    gerekli_evraklar:
+      - T.C. kimlik kartı veya geçici kimlik belgesi
+      - Son altı ayda çekilmiş bir adet biyometrik fotoğraf
+      - Varsa iptal edilmemiş eski pasaport
+    kurum: İl veya ilçe nüfus müdürlüğü
+    dayanaklar:
+      - kaynak: *pasaport
+        alinti: >-
+          T.C. kimlik kartı veya geçici kimlik belgesi, • Son altı ayda çekilmiş bir adet
+          biyometrik fotoğraf
+      - kaynak: *pasaport
+        alinti: >-
+          Eski pasaport (Daha önceden alınmış ve iptali yapılmamış pasaportların başvuruda
+          getirilmesi gerekmektedir.)
+      - kaynak: *sss
+        alinti: >-
+          son altı ay içerisinde yüz tamamen görünür şekilde ön cepheden çekilmiş, 50mmx60mm
+          ebatlarında
+      - kaynak: *sss
+        alinti: >-
+          Fotokopi, bilgisayarda çoğaltılan veya biyometrik olmayan fotoğraflar kabul
+          edilmemektedir.
+
+  - id: belgeler_hususi
+    goster_eger:
+      pasaport_turu: [Hususi damgalı (yeşil)]
+    baslik: Hususi damgalı pasaport için belgeleri hazırlayın
+    aciklama: >-
+      Çalışan kamu görevlileri, ihracatçılar, avukatlar ve vakıf yükseköğretim kurumlarındaki
+      öğretim üyeleri talep formu getirir. Emeklilik veya çekilme nedeniyle görevden ayrılanlar,
+      son görev yaptıkları kurumdan bir defaya mahsus kadro durumunu gösteren resmi yazı alır.
+    gerekli_evraklar:
+      - T.C. kimlik kartı veya geçici kimlik belgesi
+      - Son altı ayda çekilmiş bir adet biyometrik fotoğraf
+      - Hususi damgalı pasaport talep formu veya kadro durumunu gösteren resmi yazı
+      - Varsa iptal edilmemiş eski pasaport
+    kurum: İl nüfus ve vatandaşlık müdürlüğü
+    dayanaklar:
+      - kaynak: *pasaport
+        alinti: >-
+          Çalışan kamu görevlileri, ihracatçılar, ve avukatlar ve vakıf yükseköğretim
+          kurumlarında görev yapan öğretim üyeleri için hususi damgalı pasaport talep formu
+      - kaynak: *pasaport
+        alinti: >-
+          Emeklilik veya çekilme nedenleri ile görevinden ayrılanlar için bir defaya mahsus kadro
+          durumunu gösterir elektronik veya ıslak imzalı resmi yazı (Bu belgeyi kişiler son görev
+          yaptıkları kurumlarından almaları gerekmektedir.)
+      - kaynak: *pasaport
+        alinti: >-
+          T.C. Kimlik Kartı veya geçici kimlik belgesi, • Son altı ayda çekilmiş 1 (bir) adet
+          biyometrik fotoğraf
+
+  - id: belgeler_hizmet
+    goster_eger:
+      pasaport_turu: [Hizmet damgalı (gri)]
+    baslik: Hizmet damgalı pasaport için belgeleri hazırlayın
+    aciklama: >-
+      Kamu görevlisi olmayanlar talep formuyla birlikte görev onayı getirir. Görevlendirilen ülke
+      vize uygulamıyorsa görevin başlamasından 20 gün, vize uyguluyorsa 60 gün önce başvuru
+      alınır.
+    gerekli_evraklar:
+      - T.C. kimlik kartı veya geçici kimlik belgesi
+      - Son altı ayda çekilmiş bir adet biyometrik fotoğraf
+      - Hizmet damgalı pasaport talep formu (kamu görevlisi değilseniz görev onayıyla)
+      - Varsa iptal edilmemiş eski pasaport
+    kurum: İl nüfus ve vatandaşlık müdürlüğü
+    dayanaklar:
+      - kaynak: *pasaport
+        alinti: >-
+          Hizmet damgalı pasaport talep formu, (protokol imzalanan kurumlardan elektronik talep
+          formu) • Kamu görevlisi olmayanlar için talep formu ile birlikte görev onayı
+      - kaynak: *sss
+        alinti: >-
+          Görevlendirme yapılan ülke tarafından vize uygulanmıyor ise görevin başlama tarihinden
+          20 gün önce, vize uygulanıyor ise görevin başlama tarihinden 60 gün önce başvuru
+          alınmaktadır.
+
+  - id: cocuk_muvafakat
+    goster_eger:
+      veli_durumu: ["Hayır, gelemeyecekler"]
+    baslik: Noterden muvafakatname ve vekâletname düzenletin
+    aciklama: >-
+      Anne ve baba başvuruya gelemiyorsa çocuk ergin bir kişinin refakatinde başvurur. Bu kişi,
+      yasal temsilcilerin muvafakatnamesini ve anne ya da babadan birinin verdiği vekâletnameyi
+      ibraz eder. Muvafakatname noterlerde veya dış temsilciliklerde düzenlenir.
+    gerekli_evraklar:
+      - Yasal temsilcilerin muvafakatnamesi
+      - Anne veya babadan birinin verdiği vekâletname
+    kurum: Noterlik
+    dayanaklar:
+      - kaynak: *sss
+        alinti: >-
+          Çocukların ergin bir kişinin refakatinde başvuru yapması gerekmektedir. Çocuklara
+          pasaport düzenlenmesine dair yasal temsilcilerin muvafakatnamesi ile başvuruya gelecek
+          kişinin çocukların pasaport başvurusuna ilişkin iş ve işlemleri yürütebilmesi için anne
+          veya babadan herhangi biri tarafından verilmiş vekâletname ibraz etmesi
+          gerekmektedir.
+      - kaynak: *sss
+        alinti: >-
+          Muvafakatname: Ergin olmayan ve kısıtlıların pasaport alabilmeleri için, yasal
+          temsilcileri tarafından noterler ve dış temsilciliklere düzenlettirilen belgedir.
+
+  - id: sahsen_basvuru
+    baslik: Randevu gününde şahsen başvurun
+    aciklama: >-
+      Pasaport başvurusunda biyometrik veri alındığı için başvuru sahibi başvuruya şahsen gelir.
+    kurum: İl veya ilçe nüfus müdürlüğü
+    dayanaklar:
+      - kaynak: *sss
+        alinti: >-
+          Pasaport başvurusunda biyometrik veri alındığından şahsen başvuru yapılması
+          gerekmektedir.
+
+  - id: teslim
+    baslik: Pasaportunuzu teslim alın
+    aciklama: >-
+      Pasaport basımdan sonra PTT kargo ile 56 il merkezine 1 gün, diğer il merkezlerine 2 gün,
+      ilçe merkezlerine en geç 4 iş günü içinde teslim edilebilir. Süreç randevu.nvi.gov.tr,
+      e-Devlet, NVİ Mobil veya Alo 199 üzerinden takip edilir. Adrese teslim edilemeyen pasaport
+      10 gün PTT şubesinde bekletilir, sonra başvuru merkezine gönderilir.
+    kurum: PTT
+    dayanaklar:
+      - kaynak: *sss
+        alinti: >-
+          Pasaportlar basımı gerçekleştirildikten sonra 56 il merkezine 1 gün, diğer il
+          merkezlerine 2 gün, ilçe merkezlerine en geç 4 iş günü içinde PTT kargo tarafından
+          teslim edilebilmektedir.
+      - kaynak: *sss
+        alinti: >-
+          Nüfus ve Vatandaşlık İşleri Genel Müdürlüğünün https://randevu.nvi.gov.tr adresi,
+          e-Devlet Kapısı, NVİ Mobil veya ALO 199 (Çağrı Merkezi) üzerinden takip edilebilir
+      - kaynak: *sss
+        alinti: >-
+          Adrese teslim edilemeyen pasaportlar 10 gün PTT şubesinde bekletilmekte olup bu süre
+          içerisinde de teslim alınmaması halinde, müracaat esnasında belirtilen başvuru merkezine
+          teslim edilmektedir.
+
+uyarilar:
+  - metin: >-
+      Pasaportlarda süre uzatımı yapılmaz; her başvuruda yeni pasaport düzenlenir.
+    dayanaklar:
+      - kaynak: *pasaport
+        alinti: >-
+          Pasaportlarda süre uzatımı yapılmamakta olup, her başvuruda yeni pasaport
+          düzenlenmektedir.
+  - goster_eger:
+      eski_pasaport: [Var]
+      pasaport_turu: [Umuma mahsus (bordo), Bilmiyorum]
+    metin: >-
+      Geçerliliği devam eden umuma mahsus pasaport yenilendiğinde kalan süre yeni pasaporta
+      aktarılır.
+    dayanaklar:
+      - kaynak: *sss
+        alinti: >-
+          Geçerliliği devam eden umuma mahsus pasaportun yenilenmesi halinde; kalan süre
+          düzenlenecek olan yeni umuma mahsus pasaporta aktarılmaktadır.
+  - goster_eger:
+      eski_pasaport: [Var]
+    metin: >-
+      Eski pasaportun geçerli vize, ikamet veya çalışma izni bulunan sayfaları iptal edilmez;
+      seyahatte eski pasaport yeni pasaportla birlikte taşınmalıdır.
+    dayanaklar:
+      - kaynak: *pasaport
+        alinti: >-
+          Vize süresi, ikamet izni, çalışma izni gibi geçerlilik süresi devam eden durumu gösterir
+          pasaport sayfalarına iptal işlemi uygulanmaz. İlgili, seyahat sırasında eski pasaportu
+          ile birlikte yeni pasaportunu taşımak zorundadır.
+  - goster_eger:
+      pasaport_kimin: [18 yaşından küçük bir çocuk için]
+    metin: >-
+      Çocuklar dahil her yaş için biyometrik fotoğraf gerekir. Yedi yaşını tamamlayanların
+      biyometrik verisi, on iki yaşını tamamlayanların ayrıca imzası alınır. Her çocuk için ayrı
+      pasaport düzenlenir.
+    dayanaklar:
+      - kaynak: *sss
+        alinti: Pasaport başvurularında her yaş grubu için biyometrik fotoğraf gerekmektedir.
+      - kaynak: *sss
+        alinti: >-
+          Yedi yaşını tamamlayan her başvuru sahibinin biyometrik verisi, on iki yaşını
+          tamamlayanların biyometrik verisi ve imzası alınır.
+      - kaynak: *sss
+        alinti: Pasaportlarda refakat hanesi bulunmamakta olup her kişi için ayrı pasaport düzenlenmektedir.
+  - goster_eger:
+      veli_durumu: [Velayet mahkeme kararıyla bir ebeveynde]
+    metin: >-
+      Ergin olmayan çocuğun velayeti mahkeme kararıyla kime verildiyse o kişinin muvafakati
+      yeterlidir.
+    dayanaklar:
+      - kaynak: *sss
+        alinti: >-
+          Ergin olmayan çocukların velayeti mahkeme kararı ile kime verilmiş ise o kişinin
+          muvafakatı yeterlidir.
+  - goster_eger:
+      pasaport_turu: [Bilmiyorum]
+    metin: >-
+      Pasaport türleri: umuma mahsus (bordo), hususi damgalı (yeşil), hizmet damgalı (gri),
+      diplomatik (siyah, Dışişleri Bakanlığınca), geçici (pembe, dış temsilciliklerce) ve
+      yabancılara mahsus (Göç İdaresince). Yol haritası umuma mahsus pasaporta göre hazırlandı.
+    dayanaklar:
+      - kaynak: *pasaport
+        alinti: >-
+          Umuma Mahsus Pasaport ( bordo renkte) • Hususi Damgalı Pasaport (yeşil renkte) • Hizmet
+          Damgalı Pasaport (gri renkte) • Diplomatik Pasaport ( siyah renkte) (Dışişleri
+          Bakanlığınca verilmektedir.) • Geçici Pasaport (Pembe renkte) (Dış Temsilciliklerce
+          verilmektedir.) • Yabancılara Mahsus Pasaport (Göç İdaresi Genel Müdürlüğünce
+          verilmektedir.)
+
+notlar:
+  - goster_eger:
+      ogrenci:
+        - Evet, yurt içinde öğrenciyim (25 yaşından küçük)
+        - Evet, yurt dışında öğrenciyim
+    metin: >-
+      Harçsız pasaportta defter bedelinin ödenip ödenmeyeceği taranan resmi kaynaklarda açıkça
+      yer almıyor. Güncel ücretler için randevu.nvi.gov.tr adresine bakınız veya nüfus
+      müdürlüğüne danışınız.

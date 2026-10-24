@@ -1,0 +1,209 @@
+# Sorularla ilerleyen rehber: Kimlik kartı yenileme
+# Kurallar için bkz. miras_arac_devri.yaml başındaki açıklama.
+
+islem: kimlik_karti_yenileme
+onaylandi: false
+ozet: >-
+  Kimlik kartı başvurusu randevu alınarak nüfus müdürlüğüne yapılır; başvuru tarihindeki kart
+  bedeli önceden ödenir. On beş yaşından küçük çocukların fotoğrafsız kart başvurusu e-Devlet
+  üzerinden de yapılabilir.
+
+sorular:
+  - anahtar: kimlik_kimin
+  - anahtar: cocuk_fotografli
+    sor_eger:
+      kimlik_kimin: [15 yaşından küçük bir çocuk için]
+  - anahtar: kimlik_nedeni
+
+adimlar:
+  - id: kayip_bildirimi
+    goster_eger:
+      kimlik_nedeni: [Kimlik kartım veya nüfus cüzdanım kayboldu]
+    baslik: Kaybı bildirin ve yeniden başvurun
+    aciklama: >-
+      Kart sahibi, kartı kaybettiğinde durumu yurt içinde çağrı merkezine veya nüfus
+      müdürlüğüne bildirmekle yükümlüdür. Yeniden kimlik kartı başvurusu e-Devlet üzerinden veya
+      nüfus müdürlüğünde yapılır; başvuruyla birlikte kaybolan belge geçersiz hâle gelir.
+    kurum: Nüfus müdürlüğü veya Alo 199
+    dayanaklar:
+      - kaynak: &kk https://www.nvi.gov.tr/sss-kimlik-karti
+        alinti: >-
+          Kartı kaybetmesi halinde durumu yurt içinde çağrı merkezine veya nüfus müdürlüklerine,
+          yurt dışında ise en yakın dış temsilciliğe bildirmekle, yükümlüdür.
+      - kaynak: *kk
+        alinti: >-
+          e- Devlet kapısı üzerinden ve yurt içinde nüfus müdürlüklerine, yurt dışında ise dış
+          temsilciliklerimize yapılacak yeniden kimlik kartı başvurusu neticesinde kayıp nüfus
+          cüzdanı/kimlik kartı geçersiz hale gelir.
+
+  - id: edevlet_cocuk
+    goster_eger:
+      cocuk_fotografli: ["Hayır, fotoğrafsız olabilir"]
+    baslik: Başvuruyu e-Devlet üzerinden yapın
+    aciklama: >-
+      On beş yaşını tamamlamamış çocukların fotoğrafsız kimlik kartı başvurusu e-Devlet
+      üzerinden yapılabilir.
+    kurum: e-Devlet Kapısı
+    dayanaklar:
+      - kaynak: *kk
+        alinti: >-
+          On beş yaşını tamamlamamış çocukların fotoğrafsız kimlik kartı başvuruları e-Devlet
+          kapısı üzerinden yapılabilmektedir.
+
+  - id: bedel
+    goster_eger:
+      - kimlik_kimin: [Kendim için (15 yaşını tamamladım)]
+      - cocuk_fotografli: ["Evet, fotoğraflı olsun (ör. seyahat belgesi olarak kullanılacak)"]
+    baslik: Kimlik kartı bedelini ödeyin
+    aciklama: >-
+      Başvuru tarihinde geçerli olan ve Resmî Gazete'de yayımlanan kart bedeli ödenir; bir önceki
+      yılın bedeli geçerli değildir. Tutar Dijital Vergi Dairesi, randevu.nvi.gov.tr veya
+      alo199.nvi.gov.tr üzerinden öğrenilebilir. Ödeme vergi dairesine, ivd.gib.gov.tr üzerinden,
+      anlaşmalı bankalara veya PTT şubelerine yapılabilir.
+    kurum: Vergi dairesi, ivd.gib.gov.tr, anlaşmalı banka veya PTT
+    dayanaklar:
+      - kaynak: *kk
+        alinti: >-
+          yurt içinde nüfus müdürlüklerine, yurt dışında ise dış temsilciliklere kimlik kartı
+          başvurusunun yapıldığı tarihte Hazine ve Maliye Bakanlığınca belirlenerek Resmî Gazetede
+          yayımlanan kimlik kartı satış bedelinin ödenmesi gerekmektedir.
+      - kaynak: *kk
+        alinti: >-
+          Gelir İdaresi Başkanlığının resmi platformu olan Dijital Vergi Dairesi üzerinden,
+          https://randevu.nvi.gov.tr/ veya https://alo199.nvi.gov.tr/ internet adresinden
+      - kaynak: *kk
+        alinti: >-
+          Vergi Dairesi Müdürlüklerinden, • Gelir İdaresi Başkanlığına ait https://ivd.gib.gov.tr/
+          internet adresi üzerinden sanal pos uygulamasıyla kredi kartı veya banka kartı
+          aracılığıyla
+      - kaynak: *kk
+        alinti: PTT Şubelerinden
+
+  - id: randevu
+    goster_eger:
+      - kimlik_kimin: [Kendim için (15 yaşını tamamladım)]
+      - cocuk_fotografli: ["Evet, fotoğraflı olsun (ör. seyahat belgesi olarak kullanılacak)"]
+    baslik: Randevu alın
+    aciklama: >-
+      Başvuru randevulu olarak nüfus müdürlüğüne yapılır. Randevu randevu.nvi.gov.tr, Alo 199,
+      e-Devlet, NVİ Mobil veya Nüfusmatik üzerinden alınabilir.
+    kurum: Nüfus müdürlüğü
+    dayanaklar:
+      - kaynak: *kk
+        alinti: >-
+          Kimlik kartı başvurusu; randevulu olarak yurt içinde nüfus müdürlüklerine, yurt dışında
+          ise dış temsilciliklere yapılır. Kimlik kartı başvurusu için randevu alınması işlemi;
+          yurt içinde https://randevu.nvi.gov.tr/ internet adresinden, Çağrı Merkezi (Alo199)
+          üzerinden, e-Devlet kapısı üzerinden, NVİ Mobil ya da Nüfusmatik üzerinden
+          yapılabilir.
+
+  - id: basvuru_yetiskin
+    goster_eger:
+      kimlik_kimin: [Kendim için (15 yaşını tamamladım)]
+    baslik: Nüfus müdürlüğüne şahsen başvurun
+    aciklama: >-
+      On beş yaşını tamamlayanların şahsen başvurması esastır. Fotoğraf son 6 ay içinde çekilmiş,
+      biyometrik olmalıdır; fotokopi veya bilgisayarda çoğaltılmış fotoğraf kabul edilmez.
+    gerekli_evraklar:
+      - Fotoğraflı ve geçerli bir kimlik belgesi (nüfus cüzdanı, kimlik kartı, sürücü belgesi,
+        pasaport vb.)
+      - Son 6 ay içinde çekilmiş 1 adet biyometrik fotoğraf
+    kurum: Nüfus müdürlüğü
+    dayanaklar:
+      - kaynak: *kk
+        alinti: >-
+          Kimlik kartı başvurusunda; on beş yaşını tamamlayan kişilerin şahsen başvurmaları
+          esastır.
+      - kaynak: *kk
+        alinti: >-
+          Fotoğraflı ve geçerli kimlik belgesi (Nüfus cüzdanı, kimlik kartı, uluslararası aile
+          cüzdanı, sürücü belgesi, pasaport, geçici kimlik belgesi ve kurumların kendi
+          mevzuatlarında kimlik yerine geçen resmi belge) - Son 6 (altı) ay içinde çekilmiş
+          Biyometrik Fotoğraf (1 adet)
+      - kaynak: *kk
+        alinti: >-
+          Fotokopi, bilgisayarda çoğaltılan veya biyometrik olmayan fotoğraflar kabul edilmez.
+
+  - id: basvuru_cocuk
+    goster_eger:
+      cocuk_fotografli: ["Evet, fotoğraflı olsun (ör. seyahat belgesi olarak kullanılacak)"]
+    baslik: Çocuk için nüfus müdürlüğüne başvurun
+    aciklama: >-
+      On beş yaşını tamamlamamış çocukların başvurusu veli, vasi veya kayyum; bunlar yoksa büyük
+      anne, büyük baba, ergin kardeşler, çocuğu yanında bulunduranlar ya da vekâletname ibraz eden
+      resmî vekil tarafından yapılır. Fotoğraflı kart istendiğinde başvuru nüfus müdürlüğüne
+      yapılır.
+    gerekli_evraklar:
+      - Çocuğun son 6 ay içinde çekilmiş biyometrik fotoğrafı
+      - Başvuranın fotoğraflı ve geçerli kimlik belgesi
+    kurum: Nüfus müdürlüğü
+    dayanaklar:
+      - kaynak: *kk
+        alinti: >-
+          On beş yaşını tamamlamayanların başvuruları ise veli, vasi, kayyum, bunların bulunmaması
+          halinde, çocuğun büyük ana, büyük baba, ergin kardeşleri, çocuğu yanında bulunduranlar
+          ya da vekâletname ibraz eden resmî vekil tarafından yapılır.
+      - kaynak: *kk
+        alinti: >-
+          On beş yaşını tamamlamamış olanların kimlik kartında fotoğraf bulunmasının talep
+          edilmesi halinde yurt içinde nüfus müdürlüklerine yurt dışında ise dış temsilciliğe
+          başvuru yapılmalıdır.
+
+  - id: teslim
+    baslik: Kartı teslim alın
+    aciklama: >-
+      On beş yaşını tamamlayanların kartı kendisine veya başvuruda belirlediği kişiye teslim
+      edilir. Teslim edilemeyen kartlar başvuruda belirtilen nüfus müdürlüğüne bırakılır ve 90 gün
+      içinde alınmazsa iptal edilip imha edilir. Başvurunun durumu Alo 199, randevu.nvi.gov.tr
+      veya e-Devlet üzerinden takip edilebilir.
+    kurum: Nüfus müdürlüğü
+    dayanaklar:
+      - kaynak: *kk
+        alinti: >-
+          on beş yaşını tamamlayan kişilerin kimlik kartları kendilerine veya başvuru sırasında
+          belirlediği kişiye teslim edilir.
+      - kaynak: *kk
+        alinti: >-
+          İlgilisine veya başvurusu sırasında belirlediği kişiye teslim edilemeyen kartlar
+          ilgilinin başvurusu sırasında belirttiği nüfus müdürlüğüne teslim edilir. Belirlenen süre
+          (90 gün) içinde teslim alınmayan kartlar iptal ve imha edilir.
+      - kaynak: *kk
+        alinti: >-
+          Yurt içinde Alo 199 Çağrı Merkezinden veya Nüfus ve Vatandaşlık İşleri Genel Müdürlüğü
+          https://randevu.nvi.gov.tr/ web portalı ya da e-Devlet uygulaması üzerinden
+          öğrenilmekte ve takip edilebilmektedir.
+
+uyarilar:
+  - goster_eger:
+      kimlik_nedeni: [Eski nüfus cüzdanımı değiştireceğim]
+    metin: >-
+      Her Türk vatandaşının kimlik kartı alması zorunludur; ancak nüfus cüzdanının değiştirilmesi
+      için belirlenmiş bir son tarih ve değiştirmemeye bağlı bir idari para cezası yoktur.
+    dayanaklar:
+      - kaynak: *kk
+        alinti: >-
+          Türkiye Cumhuriyeti vatandaşı herkes kimlik kartı almak mecburiyetinde ve zorundadır.
+      - kaynak: *kk
+        alinti: >-
+          Nüfus cüzdanlarının kimlik kartı ile değiştirilmesi için belirlenen son tarih
+          bulunmamaktadır.
+      - kaynak: *kk
+        alinti: >-
+          nüfus cüzdanının kimlik kartıyla değiştirilmemesi durumunda idari para cezası
+          ödeneceğine dair bir düzenleneme bulunmamaktadır.
+  - goster_eger:
+      kimlik_nedeni: [Kimlik kartım veya nüfus cüzdanım kayboldu]
+    metin: Kimlik kartı veya nüfus cüzdanının kaybı nedeniyle idari para cezası uygulanmaz.
+    dayanaklar:
+      - kaynak: *kk
+        alinti: >-
+          nüfus cüzdanı/kimlik kartının kaybı nedeniyle idari para cezası uygulanacağına dair bir
+          düzenleneme bulunmamaktadır.
+  - metin: >-
+      Yeni kartın PIN ve PUK bilgileri e-Devlet'teki "T.C. Kimlik Kartı PIN/PUK Kodu ve Kişisel
+      Mesaj Sorgulama" hizmetinden öğrenilebilir.
+    dayanaklar:
+      - kaynak: *kk
+        alinti: >-
+          "T.C. Kimlik Kartı PIN/PUK Kodu ve Kişisel Mesaj Sorgulama" hizmetinden
+          öğrenilebilmektedir.

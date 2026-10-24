@@ -11,16 +11,25 @@ ozet: >-
 sorular:
   - anahtar: vasiyetname
   - anahtar: ozel_durum
+  - anahtar: vefat_donemi
+    sor_eger:
+      vasiyetname: [Yok, Bilmiyorum]
+      ozel_durum: [Hayır, Bilmiyorum]
   - anahtar: basvuru_yeri
     sor_eger:
       vasiyetname: [Yok, Bilmiyorum]
       ozel_durum: [Hayır, Bilmiyorum]
+      vefat_donemi: ["23/11/1990'dan sonra", Bilmiyorum]
+  - anahtar: temsilen_basvuru
+    sor_eger:
+      basvuru_yeri: [Noter, Fark etmez]
 
 adimlar:
   - id: noterden_basvuru
     goster_eger:
       vasiyetname: [Yok, Bilmiyorum]
       ozel_durum: [Hayır, Bilmiyorum]
+      vefat_donemi: ["23/11/1990'dan sonra", Bilmiyorum]
       basvuru_yeri: [Noter, Fark etmez]
     baslik: Bir noterliğe başvurun
     aciklama: >-
@@ -48,6 +57,7 @@ adimlar:
     goster_eger:
       vasiyetname: [Yok, Bilmiyorum]
       ozel_durum: [Hayır, Bilmiyorum]
+      vefat_donemi: ["23/11/1990'dan sonra", Bilmiyorum]
       basvuru_yeri: [Noter, Fark etmez]
     baslik: Nüfus kaydında eksiklik çıkarsa Nüfus Müdürlüğüne gidin
     aciklama: >-
@@ -67,6 +77,7 @@ adimlar:
       - vasiyetname: [Var]
       - ozel_durum: [Evet]
       - basvuru_yeri: [Sulh hukuk mahkemesi]
+      - vefat_donemi: ["23/11/1990'dan önce ve eşi sağ", "04/04/1926'dan önce"]
     baslik: Sulh hukuk mahkemesine başvurun
     aciklama: >-
       Mirasçılık belgesi sulh hukuk hâkiminden de alınır. Noter şu durumlarda belge veremez:
@@ -97,8 +108,16 @@ adimlar:
 
 uyarilar:
   - goster_eger:
+      temsilen_basvuru: [Bir başkası adına (vekâletname veya mahkeme kararıyla)]
+    metin: >-
+      Başkası adına başvuruda vekâletname ya da mahkeme kararı noterliğe ibraz edilir.
+    dayanaklar:
+      - kaynak: *tnb
+        alinti: Temsilen başvuru yapılıyor ise Vekaletname ya da Mahkeme Kararı
+  - goster_eger:
       - vasiyetname: [Bilmiyorum]
       - ozel_durum: [Bilmiyorum]
+      - vefat_donemi: [Bilmiyorum]
     metin: >-
       Noter, belge verilmesine engel bir durum tespit ederse "Red Belgesi" verip sulh hukuk
       mahkemesine yönlendirir.
@@ -134,6 +153,7 @@ notlar:
       - vasiyetname: [Var]
       - ozel_durum: [Evet]
       - basvuru_yeri: [Sulh hukuk mahkemesi]
+      - vefat_donemi: ["23/11/1990'dan önce ve eşi sağ", "04/04/1926'dan önce"]
     metin: >-
       Sulh hukuk mahkemesine başvurunun usulü, gerekli belgeler ve masraflar taranan resmi
       kaynaklarda yer almıyor. Başvurudan önce ilgili adliyedeki sulh hukuk mahkemesi ile

@@ -1,0 +1,198 @@
+# Sorularla ilerleyen rehber: İkametgâh / yerleşim yeri belgesi
+# Kurallar için bkz. miras_arac_devri.yaml başındaki açıklama.
+
+islem: yerlesim_yeri_belgesi
+onaylandi: false
+ozet: >-
+  Kişiler kendilerinin ve ergin olmayan çocuklarının yerleşim yeri belgesini e-Devlet'ten
+  alabilir. Yeni bir adrese taşındıysanız önce adres değişikliğinin bildirilmesi gerekir.
+
+sorular:
+  - anahtar: belge_kimin
+  - anahtar: adres_guncel
+    sor_eger:
+      belge_kimin: [Kendim için, 18 yaşından küçük çocuğum için]
+  - anahtar: yeni_adres_durumu
+    sor_eger:
+      adres_guncel: ["Hayır, yeni bir adrese taşındım"]
+
+adimlar:
+  - id: baska_yetiskin
+    goster_eger:
+      belge_kimin: [Başka bir yetişkin için]
+    baslik: Belgeyi kişinin kendisi veya yetki verdiği vekil alabilir
+    aciklama: >-
+      Adres bilgisinin verilmesi kişinin rızasına bağlıdır. Bir kişinin adres bilgisini kendisi,
+      aynı adreste kayıtlı eşi ve ergin çocukları ya da bu konuda yetki verdiği vekili alabilir;
+      bunun dışında kimse başkasının adres bilgisini alamaz.
+    kurum: Nüfus müdürlüğü veya e-Devlet
+    dayanaklar:
+      - kaynak: &sss https://www.nvi.gov.tr/sss-adres-hizmetleri
+        alinti: >-
+          Yerleşim yeri adresi ve diğer adres bilgilerinin verilmesi kişinin rızasına bağlıdır.
+          Bir kişinin adres bilgisini kendisi, aynı konutu paylaşan (yani aynı adreste kayıtlı
+          olan) bulunan, eş ve ergin çocukları ya da bu konuda yetki verdiği vekili alabilir.
+          Bunun dışında kimse kimsenin adres bilgisini alamaz.
+
+  - id: adres_bildirimi
+    goster_eger:
+      adres_guncel: ["Hayır, yeni bir adrese taşındım"]
+    baslik: Önce yeni adresinizi bildirin (20 iş günü içinde)
+    aciklama: >-
+      Adres değişikliği 20 iş günü içinde bildirilmelidir. Bildirim ilçe nüfus müdürlüğüne şahsen
+      başvurarak ya da turkiye.gov.tr/adres-degisikligi-bildirimi adresinden mobil imza,
+      elektronik sertifika veya e-Devlet şifresiyle SMS doğrulaması kullanılarak yapılabilir. Aynı
+      konutu paylaşan ailenin ergin fertleri birbirlerinin yerine bildirimde bulunabilir.
+    kurum: İlçe nüfus müdürlüğü veya e-Devlet
+    dayanaklar:
+      - kaynak: &ah https://www.nvi.gov.tr/adres-hizmetleri
+        alinti: >-
+          Aynı konutu paylaşan ailenin ergin fertleri birbirlerinin yerine adres beyanında
+          bulunabilirler. Bildirim ilçe nüfus müdürlüklerine veya dış temsilciliklere şahsen
+          başvuru yapılarak ya da internet üzerinden adres bildirimleri
+          https://www.turkiye.gov.tr/adres-degisikligi-bildirimi adresinden
+      - kaynak: *sss
+        alinti: >-
+          5490 sayılı Nüfus Hizmetleri Kanunu’nun 50’nci maddesine göre, adres değişikliği
+          bildirimi, 20 iş günü içerisinde yapılmalıdır.
+
+  - id: bos_konut
+    goster_eger:
+      yeni_adres_durumu: ["Hayır, adres boş"]
+    baslik: Boş konut için abonelik belgenizi hazırlayın
+    aciklama: >-
+      Adreste kayıtlı kimse yoksa bildirimi teyit eden bir belge istenir: elektrik, su, doğalgaz,
+      sabit telefon veya sabit internet gibi adrese ait bir aboneliğin sözleşmesi ya da faturası.
+      Gerektiğinde konut sahibi, site veya apartman yönetimi ya da muhtar tarafından imzalanmış
+      belge de istenebilir. İşlem e-Devlet'teki "Adres Değişikliği Bildirimi (Boş Konuta)"
+      hizmetinden de yapılabilir.
+    gerekli_evraklar:
+      - Adrese ait elektrik, su, doğalgaz, sabit telefon veya sabit internet abonelik sözleşmesi
+        ya da faturası
+    kurum: İlçe nüfus müdürlüğü veya e-Devlet
+    dayanaklar:
+      - kaynak: *sss
+        alinti: >-
+          Boş adrese adres bildiriminde, kişilerden bildirimi teyit edici belgeler istenir.
+          Elektrik, su, doğalgaz, sabit telefon, sabit internet gibi adrese tahsis edilmiş
+          aboneliklerden birine ait abonelik sözleşmesi veya faturası bildirimi teyit edici
+          belgelerdir. Gerektiğinde, müstakil konut sahibi, site veya apartman yönetimi, lojman
+          idaresi sorumlusu veya muhtar tarafından imzalanmış belgeler de istenebilir.
+      - kaynak: *sss
+        alinti: >-
+          e-Devlet Kapısından, “Adres Değişikliği Bildirimi (Boş Konuta)” hizmetini kullanarak
+          elektronik imza, mobil imza veya SMS ile doğrulama yöntemlerinden biriyle işleminizi
+          yapabilirsiniz.
+
+  - id: birlikte_oturma
+    goster_eger:
+      yeni_adres_durumu: ["Evet, onlarla birlikte oturacağım"]
+    baslik: Adreste kayıtlı ergin kişinin onayıyla (muvafakatle) bildirin
+    aciklama: >-
+      Birlikte oturma gerekçesiyle bildirimde, adreste kayıtlı ergin bir kişinin izni aranır.
+      Bildirimde bulunan kişi ile bu kişinin nüfus müdürlüğüne birlikte, mümkün değilse ayrı ayrı
+      başvurması gerekir. İşlem e-Devlet'teki "Adres Değişikliği Bildirimi (Birlikte Oturmak İçin /
+      Muvafakatlı)" hizmetinden de yapılabilir.
+    kurum: İlçe nüfus müdürlüğü veya e-Devlet
+    dayanaklar:
+      - kaynak: *sss
+        alinti: >-
+          Birlikte oturma gerekçesiyle adres bildiriminde kişinin bildirimi yeterli görülmez ve
+          adreste hâlihazırda kayıtlı ergin bir kişinin izni ve rızası (muvafakati) aranır.
+      - kaynak: *sss
+        alinti: >-
+          Bu bildirim türünde, adrese bildirimde bulunacak kişi ile adreste hâlihazırda kayıtlı
+          ergin bir kişinin, birlikte ya da ayrı ayrı başvuruları gerekir.
+      - kaynak: *sss
+        alinti: >-
+          e-Devlet’ten, “Adres Değişikliği Bildirimi (Birlikte Oturmak İçin / Muvafakatlı)”
+          hizmetini kullanarak elektronik imza, mobil imza veya SMS ile doğrulama yöntemlerinden
+          biriyle işleminizi yapabilirsiniz.
+
+  - id: dolu_konut
+    goster_eger:
+      yeni_adres_durumu: ["Evet, ama orada artık oturmuyorlar"]
+    baslik: Nüfus müdürlüğüne abonelik belgenizle başvurun
+    aciklama: >-
+      Adreste kayıtlı kişi varsa bildirimi teyit eden bir belge istenir; işlem sonunda o kişilerin
+      kaydı "eski adres" konumuna alınır. Bu işlem şu an e-Devlet'ten yapılamaz. Aboneliklerin
+      kendi adınıza olması işlemi kolaylaştırır.
+    gerekli_evraklar:
+      - Adrese ait elektrik, su, doğalgaz, sabit telefon veya sabit internet abonelik sözleşmesi
+        ya da faturası
+    kurum: İlçe nüfus müdürlüğü
+    dayanaklar:
+      - kaynak: *sss
+        alinti: >-
+          Oturan kaydı bulunan adrese (dolu konuta) adres bildiriminde, kişinin bildirimi yeterli
+          görülmez ve bildirimi teyit edici belgeler istenir.
+      - kaynak: *sss
+        alinti: >-
+          İşlem sonucunda, adreste hali hazırda kayıtlı kişilerin adres kaydı “eski adres”
+          konumuna getirilerek arşivlenir.
+      - kaynak: *sss
+        alinti: Bu işlem mevcut durumda, e-Devlet’ten gerçekleştirilememektedir.
+      - kaynak: *sss
+        alinti: Aboneliklerinizin kendi adınıza olması, kolayca işlem yapmanızı sağlar.
+
+  - id: edevlet_belge
+    goster_eger:
+      belge_kimin: [Kendim için, 18 yaşından küçük çocuğum için]
+    baslik: Yerleşim yeri belgesini e-Devlet'ten alın
+    aciklama: >-
+      Kendinizin ve ergin olmayan çocuklarınızın yerleşim yeri belgesini e-Devlet'ten
+      sorgulayıp sonucu kâğıt veya elektronik ortamda ilgili kuruma verebilirsiniz. e-Devlet'ten
+      alınan belge, nüfus müdürlüğünden alınan belgeyle aynı hukuki değere sahiptir.
+    kurum: e-Devlet Kapısı
+    dayanaklar:
+      - kaynak: *sss
+        alinti: >-
+          Kişiler, kendilerinin ve ergin olmayan çocuklarının yerleşim yeri belgelerini,
+          e-Devlet’ten sorgulayabilir, sonucu fiziki veya elektronik ortamda merciine
+          verebilirler.
+      - kaynak: *sss
+        alinti: >-
+          e-Devlet kapısı üzerinden alınan belgeler, nüfus müdürlüklerinden alınmış diğer
+          belgelerle aynı hukuki değere sahiptir.
+
+uyarilar:
+  - goster_eger:
+      belge_kimin: [Kendim için, 18 yaşından küçük çocuğum için]
+    metin: >-
+      Güncel adres bilgileri Kimlik Paylaşımı Sistemi üzerinden kamu kurumlarıyla paylaşıldığı
+      için kamu kurumlarının vatandaştan ikametgâh belgesi istemesi uygulaması kaldırılmıştır.
+    dayanaklar:
+      - kaynak: *ah
+        alinti: >-
+          Kamu kurum ve kuruluşlarına paylaşılan güncel adres bilgileri sayesinde vatandaştan
+          “İkametgah belgesi” isteme olayı ortadan kaldırılmış
+  - goster_eger:
+      adres_guncel: ["Hayır, yeni bir adrese taşındım"]
+    metin: >-
+      2026 yılı için adres bildirimini süresinde yapmayanlara 814 TL, gerçeğe aykırı adres
+      beyanında bulunanlara 17.051 TL idari para cezası uygulanır.
+    dayanaklar:
+      - kaynak: *ah
+        alinti: >-
+          Adres bildirim yükümlülüğünü süresi içinde yerine getirmeyen kişilere 814,00 TL, -
+          Gerçeğe aykırı adres beyanında bulunan kişilere ise 17051,00 TL
+  - goster_eger:
+      adres_guncel: [Bilmiyorum]
+    metin: >-
+      Kayıtlı adresinizi e-Devlet'teki "NVİ Adres Bilgilerim" hizmetinden görebilirsiniz.
+    dayanaklar:
+      - kaynak: *sss
+        alinti: >-
+          NVİ Adres Bilgilerim Bu hizmeti kullanarak, adres kaydınızın mevcut olup olmadığını ve
+          mevcutsa kayıtlı bulunduğunuz adres bilgisine erişebilirsiniz.
+  - goster_eger:
+      yeni_adres_durumu: [Bilmiyorum]
+    metin: >-
+      Adreste kayıtlı kişi olup olmadığı, işlem anında Merkezi Nüfus İdaresi Sisteminde (MERNİS)
+      incelenir; buna göre istenecek belgeler belirlenir.
+    dayanaklar:
+      - kaynak: *sss
+        alinti: >-
+          Merkezi Nüfus İdaresi Sisteminde (MERNİS) yapılan incelemede, işlem anında, bildirime
+          konu olan adreste kayıtlı kişi bulunmadığı tespit edilirse, o adres ‘‘boş adres’’
+          olarak tanımlanmaktadır.

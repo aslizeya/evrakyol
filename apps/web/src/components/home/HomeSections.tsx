@@ -24,12 +24,12 @@ type IconType = ComponentType<SVGProps<SVGSVGElement>>;
 const PROCESSES: { name: string; icon: IconType; code?: string }[] = [
   { name: "Miras yoluyla araç devri", icon: CarIcon, code: "miras_arac_devri" },
   { name: "Mirasçılık belgesi (veraset ilamı)", icon: ScrollIcon, code: "mirascilik_belgesi" },
+  { name: "Pasaport başvurusu ve yenileme", icon: PassportIcon, code: "pasaport" },
+  { name: "Kimlik kartı yenileme", icon: IdCardIcon, code: "kimlik_karti_yenileme" },
+  { name: "Ehliyet yenileme / değişimi", icon: DocumentIcon, code: "ehliyet_yenileme" },
+  { name: "İkametgâh / yerleşim yeri belgesi", icon: HomeIcon, code: "yerlesim_yeri_belgesi" },
   { name: "İkinci el araç alım-satım devri", icon: SteeringIcon },
-  { name: "Pasaport başvurusu ve yenileme", icon: PassportIcon },
   { name: "Yurt dışından getirilen telefonun IMEI kaydı", icon: PhoneIcon },
-  { name: "İkametgâh / yerleşim yeri belgesi", icon: HomeIcon },
-  { name: "Kimlik kartı yenileme", icon: IdCardIcon },
-  { name: "Ehliyet yenileme / değişimi", icon: DocumentIcon },
 ];
 
 const STEPS: { title: string; text: string; icon: IconType }[] = [

@@ -50,7 +50,14 @@ def roadmap(code: str, answers: dict[str, str], verification: Verification | Non
 
 
 def test_content_files_load_and_match_questions_and_sources() -> None:
-    assert set(get_guides()) == {"miras_arac_devri", "mirascilik_belgesi"}
+    assert set(get_guides()) == {
+        "miras_arac_devri",
+        "mirascilik_belgesi",
+        "pasaport",
+        "kimlik_karti_yenileme",
+        "ehliyet_yenileme",
+        "yerlesim_yeri_belgesi",
+    }
 
 
 def test_every_quote_in_content_is_verified_in_committed_check_file() -> None:
@@ -61,17 +68,21 @@ def test_every_quote_in_content_is_verified_in_committed_check_file() -> None:
             assert verification.is_verified(item), f"{guide.islem}: {item.alinti[:60]}"
 
 
-@pytest.mark.parametrize(
-    "word", ["kimlik numara", "plaka", "adres", "telefon", "ad soyad", "doğum"]
-)
-def test_questions_are_choices_and_never_ask_for_personal_data(word: str) -> None:
+# Kullanıcıdan değer girmesini isteyen ifadeler (serbest metin, numara, adres yazdırma)
+ENTRY_WORDS = ["yazın", "yazınız", "giriniz", "girin", "belirtiniz", "nedir?"]
+
+
+def test_questions_are_choices_and_never_ask_for_personal_data() -> None:
     for guide in get_guides().values():
         process = get_process_type(guide.islem)
         slots = {s.key: s for s in process.slots}
         for question in guide.sorular:
             slot = slots[question.anahtar]
-            assert len(slot.options) >= 2  # serbest metin yok, yalnızca seçenek
-            assert word not in slot.question.lower()
+            # Serbest metin yok: her soru 2-6 hazır seçenekten oluşur
+            assert 2 <= len(slot.options) <= 6, slot.key
+            assert not any(w in slot.question.lower() for w in ENTRY_WORDS), slot.question
+            for option in slot.options:
+                assert not any(w in option.lower() for w in ENTRY_WORDS), option
 
 
 def _guide(**overrides) -> Guide:
@@ -136,8 +147,11 @@ def test_questions_are_skipped_when_not_relevant() -> None:
     guide = get_guides()["miras_arac_devri"]
     assert next_question(guide, MIRAS, {}).key == "mirascilik_belgesi"
     answers = {"mirascilik_belgesi": "Evet", "mirasci_sayisi": "Tek mirasçı"}
-    # Tek mirasçıda "kimin adına" sorulmaz
+    # Tek mirasçıda "kimin adına" ve "birlikte mi başvurulacak" sorulmaz
     assert next_question(guide, MIRAS, answers).key == "kisitlama"
+    answers |= {"kisitlama": "Yok", "beyanname_verildi": "Evet"}
+    # Beyanname verildiyse beyanname süresi ve randevu soruları sorulmaz
+    assert next_question(guide, MIRAS, answers) is None
 
 
 def test_changing_an_earlier_answer_drops_answers_that_no_longer_apply() -> None:
@@ -161,7 +175,11 @@ FULL = {
     "mirascilik_belgesi": "Hayır",
     "mirasci_sayisi": "Birden fazla mirasçı",
     "tescil_tercihi": "Mirasçılardan biri adına",
+    "basvuru_sekli": "Evet, hepsi başvuracak",
     "kisitlama": "Yok",
+    "beyanname_verildi": "Hayır",
+    "vefat_ve_mirasci_yeri": "Vefat Türkiye'de, mirasçılar Türkiye'de",
+    "buyuksehir": "Hayır",
 }
 
 
@@ -228,15 +246,56 @@ def test_stale_sources_are_flagged() -> None:
     assert any("30 günden uzun" in w for w in result.uyarilar)
 
 
+def test_tax_return_deadline_depends_on_where_death_and_heirs_are() -> None:
+    abroad = roadmap(
+        "miras_arac_devri",
+        {**FULL, "vefat_ve_mirasci_yeri": "Vefat yurt dışında, mirasçılar başka bir ülkede"},
+    )
+    assert "Beyanname süresi: ölüm tarihini takip eden 8 ay." in abroad.uyarilar
+    assert "Beyanname süresi: ölüm tarihini takip eden 4 ay." not in abroad.uyarilar
+    filed = roadmap("miras_arac_devri", {**FULL, "beyanname_verildi": "Evet"})
+    assert "Veraset ve intikal vergisi beyannamesini verin" not in titles(filed)
+
+
+def test_every_answer_path_of_every_guide_produces_a_roadmap() -> None:
+    """Her rehberde olası tüm cevap yollarını dener; hiçbir yol boş yol haritası vermemeli."""
+    for code, guide in get_guides().items():
+        process = get_process_type(code)
+        slots = {s.key: s for s in process.slots}
+        paths: list[dict[str, str]] = [{}]
+        finished = []
+        while paths:
+            answers = paths.pop()
+            question = next_question(guide, process, answers)
+            if question is None:
+                finished.append(answers)
+                continue
+            paths.extend({**answers, question.key: o} for o in slots[question.key].options)
+        assert finished, code
+        for answers in finished:
+            result = roadmap(code, answers)
+            assert result is not None and result.adimlar, (code, answers)
+
+
 def test_will_or_special_case_routes_to_court_without_asking_where() -> None:
     guide = get_guides()["mirascilik_belgesi"]
     answers = {"vasiyetname": "Var", "ozel_durum": "Hayır"}
     assert next_question(guide, BELGE, answers) is None
+    old = {"vasiyetname": "Yok", "ozel_durum": "Hayır", "vefat_donemi": "04/04/1926'dan önce"}
+    assert next_question(guide, BELGE, old) is None
+    assert titles(roadmap("mirascilik_belgesi", old)) == ["Sulh hukuk mahkemesine başvurun"]
     result = roadmap("mirascilik_belgesi", answers)
     assert titles(result) == ["Sulh hukuk mahkemesine başvurun"]
 
     noter = roadmap(
-        "mirascilik_belgesi", {"vasiyetname": "Yok", "ozel_durum": "Hayır", "basvuru_yeri": "Noter"}
+        "mirascilik_belgesi",
+        {
+            "vasiyetname": "Yok",
+            "ozel_durum": "Hayır",
+            "vefat_donemi": "23/11/1990'dan sonra",
+            "basvuru_yeri": "Noter",
+            "temsilen_basvuru": "Mirasçı olarak kendim",
+        },
     )
     assert titles(noter)[0] == "Bir noterliğe başvurun"
 
@@ -262,7 +321,7 @@ def test_endpoint_walks_through_questions_then_returns_roadmap(client) -> None:
     body = client.post("/v1/rehber", json={"islem": "miras_arac_devri"}, headers=AUTH).json()
     assert body["durum"] == "soru"
     assert body["soru"]["anahtar"] == "mirascilik_belgesi"
-    assert body["ilerleme"] == {"cevaplanan": 0, "toplam": 3}
+    assert body["ilerleme"] == {"cevaplanan": 0, "toplam": 4}
 
     body = client.post(
         "/v1/rehber", json={"islem": "miras_arac_devri", "cevaplar": FULL}, headers=AUTH
@@ -273,13 +332,13 @@ def test_endpoint_walks_through_questions_then_returns_roadmap(client) -> None:
 
 
 def test_endpoint_unknown_process_is_404(client) -> None:
-    response = client.post("/v1/rehber", json={"islem": "pasaport"}, headers=AUTH)
+    response = client.post("/v1/rehber", json={"islem": "imei_kayit"}, headers=AUTH)
     assert response.status_code == 404
 
 
 def test_endpoint_lists_available_guides(client) -> None:
     body = client.get("/v1/rehber", headers=AUTH).json()
-    assert {g["islem"] for g in body} == {"miras_arac_devri", "mirascilik_belgesi"}
+    assert {g["islem"] for g in body} == set(get_guides())
 
 
 def test_all_process_types_with_guides_exist() -> None:

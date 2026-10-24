@@ -10,7 +10,11 @@
         {
           "key": "mirascilik_belgesi",
           "question": "Mirasçılık belgesi (veraset ilamı) alındı mı?",
-          "options": ["Evet", "Hayır", "Bilmiyorum"]
+          "options": [
+            "Evet",
+            "Hayır",
+            "Bilmiyorum"
+          ]
         },
         {
           "key": "tescil_tercihi",
@@ -25,12 +29,57 @@
         {
           "key": "mirasci_sayisi",
           "question": "Kaç mirasçı var?",
-          "options": ["Tek mirasçı", "Birden fazla mirasçı", "Bilmiyorum"]
+          "options": [
+            "Tek mirasçı",
+            "Birden fazla mirasçı",
+            "Bilmiyorum"
+          ]
         },
         {
           "key": "kisitlama",
           "question": "Araç kaydında haciz veya rehin gibi bir kısıtlama var mı?",
-          "options": ["Var", "Yok", "Bilmiyorum"]
+          "options": [
+            "Var",
+            "Yok",
+            "Bilmiyorum"
+          ]
+        },
+        {
+          "key": "beyanname_verildi",
+          "question": "Veraset ve intikal vergisi beyannamesi verildi mi?",
+          "options": [
+            "Evet",
+            "Hayır",
+            "Bilmiyorum"
+          ]
+        },
+        {
+          "key": "vefat_ve_mirasci_yeri",
+          "question": "Vefat nerede gerçekleşti, mirasçılar nerede bulunuyor?",
+          "options": [
+            "Vefat Türkiye'de, mirasçılar Türkiye'de",
+            "Vefat Türkiye'de, mirasçılar yurt dışında",
+            "Vefat yurt dışında, mirasçılar Türkiye'de",
+            "Vefat yurt dışında, mirasçılar vefatın olduğu ülkede",
+            "Vefat yurt dışında, mirasçılar başka bir ülkede"
+          ]
+        },
+        {
+          "key": "buyuksehir",
+          "question": "Vefat eden kişinin ikametgâhı Ankara, İstanbul veya İzmir'de miydi?",
+          "options": [
+            "Evet",
+            "Hayır"
+          ]
+        },
+        {
+          "key": "basvuru_sekli",
+          "question": "Trafik tescil kuruluşuna tüm mirasçılar birlikte mi başvuracak?",
+          "options": [
+            "Evet, hepsi başvuracak",
+            "Hayır, vekâlet verilecek",
+            "Henüz bilmiyorum"
+          ]
         }
       ]
     },
@@ -46,7 +95,53 @@
       "name": "Pasaport başvurusu ve yenileme",
       "description": "İlk kez pasaport başvurusu veya süresi dolan pasaportun yenilenmesi.",
       "referral": "Nüfus ve Vatandaşlık İşleri il/ilçe müdürlüğü",
-      "slots": []
+      "slots": [
+        {
+          "key": "pasaport_kimin",
+          "question": "Pasaport kimin için?",
+          "options": [
+            "Kendim için (18 yaşından büyüğüm)",
+            "18 yaşından küçük bir çocuk için"
+          ]
+        },
+        {
+          "key": "pasaport_turu",
+          "question": "Hangi pasaport türü için başvuracaksınız?",
+          "options": [
+            "Umuma mahsus (bordo)",
+            "Hususi damgalı (yeşil)",
+            "Hizmet damgalı (gri)",
+            "Bilmiyorum"
+          ]
+        },
+        {
+          "key": "ogrenci",
+          "question": "Öğrenci misiniz? (Harçsız pasaport için)",
+          "options": [
+            "Evet, yurt içinde öğrenciyim (25 yaşından küçük)",
+            "Evet, yurt dışında öğrenciyim",
+            "Hayır"
+          ]
+        },
+        {
+          "key": "eski_pasaport",
+          "question": "Daha önce alınmış ve iptal edilmemiş bir pasaport var mı?",
+          "options": [
+            "Var",
+            "Yok",
+            "Vardı ama kayboldu"
+          ]
+        },
+        {
+          "key": "veli_durumu",
+          "question": "Çocuğun yasal temsilcileri (anne ve baba) başvuruda hazır bulunacak mı?",
+          "options": [
+            "Evet, ikisi de gelecek",
+            "Hayır, gelemeyecekler",
+            "Velayet mahkeme kararıyla bir ebeveynde"
+          ]
+        }
+      ]
     },
     {
       "code": "imei_kayit",
@@ -60,14 +155,69 @@
       "name": "İkametgâh / yerleşim yeri belgesi",
       "description": "Yerleşim yeri (ikametgâh) belgesinin alınması.",
       "referral": "Nüfus ve Vatandaşlık İşleri il/ilçe müdürlüğü",
-      "slots": []
+      "slots": [
+        {
+          "key": "belge_kimin",
+          "question": "Yerleşim yeri belgesi kimin için?",
+          "options": [
+            "Kendim için",
+            "18 yaşından küçük çocuğum için",
+            "Başka bir yetişkin için"
+          ]
+        },
+        {
+          "key": "adres_guncel",
+          "question": "Nüfus kaydındaki adresiniz şu an oturduğunuz adres mi?",
+          "options": [
+            "Evet, güncel",
+            "Hayır, yeni bir adrese taşındım",
+            "Bilmiyorum"
+          ]
+        },
+        {
+          "key": "yeni_adres_durumu",
+          "question": "Taşındığınız adreste şu an kayıtlı başka biri var mı?",
+          "options": [
+            "Hayır, adres boş",
+            "Evet, onlarla birlikte oturacağım",
+            "Evet, ama orada artık oturmuyorlar",
+            "Bilmiyorum"
+          ]
+        }
+      ]
     },
     {
       "code": "kimlik_karti_yenileme",
       "name": "Kimlik kartı yenileme",
       "description": "Kimlik kartının yenilenmesi veya eski tip nüfus cüzdanının değiştirilmesi.",
       "referral": "Nüfus ve Vatandaşlık İşleri il/ilçe müdürlüğü",
-      "slots": []
+      "slots": [
+        {
+          "key": "kimlik_nedeni",
+          "question": "Kimlik kartı başvurusunu neden yapıyorsunuz?",
+          "options": [
+            "Eski nüfus cüzdanımı değiştireceğim",
+            "Kimlik kartım veya nüfus cüzdanım kayboldu",
+            "Kartım yıprandı veya bilgilerim değişti"
+          ]
+        },
+        {
+          "key": "kimlik_kimin",
+          "question": "Kimlik kartı kimin için?",
+          "options": [
+            "Kendim için (15 yaşını tamamladım)",
+            "15 yaşından küçük bir çocuk için"
+          ]
+        },
+        {
+          "key": "cocuk_fotografli",
+          "question": "Çocuğun kimlik kartında fotoğraf olmasını istiyor musunuz?",
+          "options": [
+            "Hayır, fotoğrafsız olabilir",
+            "Evet, fotoğraflı olsun (ör. seyahat belgesi olarak kullanılacak)"
+          ]
+        }
+      ]
     },
     {
       "code": "mirascilik_belgesi",
@@ -78,17 +228,47 @@
         {
           "key": "vasiyetname",
           "question": "Miras bırakanın bir vasiyetnamesi var mı?",
-          "options": ["Var", "Yok", "Bilmiyorum"]
+          "options": [
+            "Var",
+            "Yok",
+            "Bilmiyorum"
+          ]
         },
         {
           "key": "ozel_durum",
           "question": "Şu durumlardan biri geçerli mi: mirasçılardan biri evlatlık, gaip, birden çok vatandaşlığa sahip ya da miras bırakanla aynı gün vefat etmiş?",
-          "options": ["Evet", "Hayır", "Bilmiyorum"]
+          "options": [
+            "Evet",
+            "Hayır",
+            "Bilmiyorum"
+          ]
         },
         {
           "key": "basvuru_yeri",
           "question": "Belgeyi nereden almayı düşünüyorsunuz?",
-          "options": ["Noter", "Sulh hukuk mahkemesi", "Fark etmez"]
+          "options": [
+            "Noter",
+            "Sulh hukuk mahkemesi",
+            "Fark etmez"
+          ]
+        },
+        {
+          "key": "vefat_donemi",
+          "question": "Miras bırakan ne zaman vefat etti?",
+          "options": [
+            "23/11/1990'dan sonra",
+            "23/11/1990'dan önce ve eşi sağ",
+            "04/04/1926'dan önce",
+            "Bilmiyorum"
+          ]
+        },
+        {
+          "key": "temsilen_basvuru",
+          "question": "Başvuruyu kim yapacak?",
+          "options": [
+            "Mirasçı olarak kendim",
+            "Bir başkası adına (vekâletname veya mahkeme kararıyla)"
+          ]
         }
       ]
     },
@@ -97,7 +277,28 @@
       "name": "Ehliyet yenileme / değişimi",
       "description": "Sürücü belgesinin yenilenmesi veya eski tip belgenin yeni tip belgeyle değiştirilmesi.",
       "referral": "Nüfus ve Vatandaşlık İşleri il/ilçe müdürlüğü",
-      "slots": []
+      "slots": [
+        {
+          "key": "ehliyet_nedeni",
+          "question": "Sürücü belgesi için ne yapmak istiyorsunuz?",
+          "options": [
+            "Süresi doldu, yenileyeceğim",
+            "Eski tip belgemi yeni tiple değiştireceğim",
+            "Belgem kayboldu veya çalındı",
+            "Kimlik bilgilerim değişti",
+            "Yurt dışından aldığım belgeyi değiştireceğim"
+          ]
+        },
+        {
+          "key": "saglik_raporu",
+          "question": "Son 2 yıl içinde alınmış bir sürücü sağlık raporunuz var mı?",
+          "options": [
+            "Var",
+            "Yok",
+            "Bilmiyorum"
+          ]
+        }
+      ]
     }
   ]
 }
