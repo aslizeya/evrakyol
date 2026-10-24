@@ -42,6 +42,18 @@ STALE_AFTER = timedelta(days=30)
 _CONFIDENCE_ORDER: list[Confidence] = ["dusuk", "orta", "yuksek"]
 
 
+# Sistemin (LLM'in değil) eklediği uyarıların ayırt edici ifadeleri
+SYSTEM_WARNING_MARKERS = (
+    "ücret bilgisi kaynakta doğrulanamadığından",
+    "resmi kaynakta doğrulanamadığı için yol haritasına eklenmedi",
+    "30 günden uzun süredir yeniden kontrol edilmedi",
+)
+
+
+def is_system_warning(text: str) -> bool:
+    return any(marker in text for marker in SYSTEM_WARNING_MARKERS)
+
+
 class RoadmapGenerationError(Exception):
     """Model iki denemede de şemaya uygun yanıt üretemedi."""
 
@@ -56,6 +68,8 @@ class RoadmapOutcome:
     dropped_warnings: int = 0
     model: str | None = None
     source_ids: list[int] = field(default_factory=list)
+    # Modele verilen kaynak parçaları (K1, K2... sırasıyla); değerlendirmede uydurma kontrolü için
+    context: list[RetrievedChunk] = field(default_factory=list)
 
 
 # --- alıntı doğrulama ---
@@ -196,6 +210,7 @@ class RoadmapService:
                 dropped_steps=dropped,
                 dropped_warnings=dropped_warnings,
                 model=model,
+                context=chunks,
             )
 
         if dropped:
@@ -236,6 +251,7 @@ class RoadmapService:
             dropped_warnings=dropped_warnings,
             model=model,
             source_ids=sorted({c.source_id for c in cited}),
+            context=chunks,
         )
 
     def _generate(

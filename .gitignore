@@ -17,8 +17,9 @@ __pycache__/
 # Model önbelleği (embedding modelleri)
 .models/
 
-# Değerlendirme çıktılarının geçici dosyaları
+# Değerlendirme: tam istek/yanıt dökümleri büyük olabilir ve depoya girmez
 eval/.tmp/
+eval/runs/*/traces/
 
 # İşletim sistemi / editör
 .DS_Store

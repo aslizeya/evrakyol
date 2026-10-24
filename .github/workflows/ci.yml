@@ -65,6 +65,8 @@ jobs:
       - run: pip install -e ".[dev]"
       - run: ruff check .
       - run: ruff format --check .
+      - name: Değerlendirme vaka seti tutarlı mı?
+        run: python -m app.evaluation check
       - name: Testler (veritabanı testleri dahil)
         run: pytest -v
 

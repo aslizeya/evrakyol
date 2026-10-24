@@ -9,69 +9,13 @@ Kaynaklar config/sources.yaml'dan canlı çekilir, bellekte basit kelime eşleş
 import argparse
 import json
 import logging
-import re
 import sys
 
-from app.ingest.chunker import chunk_document
-from app.ingest.extract import ExtractionError, extract
-from app.ingest.fetcher import FetchError, PoliteFetcher
-from app.ingest.sources_config import get_sources_config
 from app.llm import get_llm
 from app.process_types import get_process_types
-from app.rag.retrieval import RetrievedChunk
+from app.rag.memory_retriever import InMemoryRetriever
 from app.rag.roadmap import RoadmapService
 from app.rag.understanding import understand
-from app.text import turkish_lower
-
-
-def _stems(text: str) -> set[str]:
-    return {w[:5] for w in re.findall(r"\w+", turkish_lower(text)) if len(w) > 2}
-
-
-class InMemoryRetriever:
-    """Yalnızca deneme içindir: canlı çekilen parçaları kelime kökü örtüşmesiyle sıralar."""
-
-    def __init__(self) -> None:
-        self.config = get_sources_config()
-        self.fetcher = PoliteFetcher(self.config, max_retries=0, timeout=30)
-
-    def search(self, query: str, process_code: str, limit: int = 10) -> list[RetrievedChunk]:
-        chunks: list[RetrievedChunk] = []
-        for i, seed in enumerate(self.config.sources, start=1):
-            if process_code not in seed.process_codes:
-                continue
-            try:
-                fetched = self.fetcher.fetch(seed.url)
-                document = extract(
-                    fetched.content,
-                    fetched.content_type,
-                    legislation=seed.options.legislation,
-                    articles=seed.options.articles,
-                    charset=fetched.charset,
-                )
-            except (FetchError, ExtractionError) as exc:
-                print(f"  (atlandı: {seed.title} — {exc})", file=sys.stderr)
-                continue
-            for draft in chunk_document(document):
-                chunks.append(
-                    RetrievedChunk(
-                        chunk_id=i * 10_000 + draft.ordinal,
-                        source_id=i,
-                        source_title=seed.title or seed.url,
-                        url=seed.url,
-                        institution=seed.institution,
-                        heading_path=draft.heading_path,
-                        content=draft.content,
-                        last_fetched_at=None,
-                        score=0.0,
-                    )
-                )
-        wanted = _stems(query)
-        scored = sorted(
-            chunks,
-            key=lambda c: -len(wanted & _stems(f"{c.heading_path} {c.content}")),
-        )
-        return scored[:limit]
 
 
 def _ask(question) -> str:

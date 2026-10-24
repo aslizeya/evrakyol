@@ -35,6 +35,8 @@ class Settings(BaseSettings):
     llm_fallbacks: bool = True
     llm_daily_request_limit: int = 2000
     anthropic_api_key: str | None = None
+    # Uydurma yargıcı: test edilen modelden farklı olmalı (kendi çıktısını kayırmasın)
+    eval_judge_model: str = "claude-sonnet-5-5"
 
     @field_validator("database_url")
     @classmethod

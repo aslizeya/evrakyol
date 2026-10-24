@@ -55,10 +55,22 @@
 | 2026-10-24 | Netleştirici sorular `config/process_types.json` içinde, seçenekli ve kişisel veri istemeyen sorular                  | Tutarlılık; cevaplar LLM'in serbest yorumuna bırakılmaz. **Soruların metni proje sahibinin onayını bekliyor.**                          |
 | 2026-10-24 | Günlük LLM çağrı tavanı süreç içinde tutuluyor                                                                        | MVP için yeterli; birden çok sunucu örneğinde Redis'e taşınmalı.                                                                        |
 
+## Değerlendirme (4. aşama)
+
+| Tarih      | Karar                                                                                              | Gerekçe                                                                                                   |
+| ---------- | -------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| 2026-10-24 | Beklenen cevaplar yalnızca toplanan resmi kaynak metinlerinden; her unsurun yanında birebir alıntı | Kaynağı belli olmayan "doğru cevap", ölçülen sistemle aynı uydurma riskini taşır.                         |
+| 2026-10-24 | Tüm vakalar proje sahibi doğrulayana kadar taslak; taslakla yapılan çalıştırmalar README'ye girmez | Proje sahibi kararı (2026-10-23): beklenen cevapları proje sahibi onaylar.                                |
+| 2026-10-24 | Kapsam dışı vakalar ve "kaynak yetersiz" vakaları sette                                            | Her şeyi kapsam içi sayan veya her soruya cevap uyduran bir sistem yüksek puan almasın.                   |
+| 2026-10-24 | Kapsama ölçümü programatik (eşdeğer ifadeler); uydurma ölçümü LLM yargıçla                         | Kapsama deterministik ve ücretsiz ölçülebilir; "kaynakta var mı" sorusu anlam karşılaştırması gerektirir. |
+| 2026-10-24 | Yargıç modeli test edilen modelden farklı (varsayılan `claude-sonnet-5-5`)                         | Aynı modelin kendi çıktısını kayırma eğilimi. **Proje sahibi değiştirebilir.**                            |
+| 2026-10-24 | Altyapı hataları puana katılmaz (`errors.jsonl`); ret, kesilme ve şema hatası ayrı durumlar        | Bir API kesintisi modelin başarısızlığı gibi görünmesin.                                                  |
+
 ## Açık konular
 
 - **Araçların Satış, Devir ve Tescil Hizmetlerinin Yürütülmesi Hakkında Yönetmelik** henüz kaynak listesinde değil: Mevzuat Bilgi Sistemi'ndeki numarası güvenilir şekilde doğrulanamadı. Numara doğrulanınca `config/sources.yaml`'a eklenecek.
 - **mevzuat.gov.tr geliştirme bilgisayarından erişilemiyor** (bağlantı zaman aşımı; site başka ağlardan açılıyor). Mevzuat kaynakları yayın ortamından (Railway) ilk çalıştırmada doğrulanacak.
+- **Değerlendirme setinin doğrulanması:** `eval/VAKALAR.md` içindeki 23 beklenen unsur ve 92 vaka proje sahibinin onayını bekliyor. İlk ücretli çalıştırma için API anahtarı ve (yayın metrikleri için) indekslenmiş veritabanı gerekiyor.
 - **Netleştirici soruların onayı:** Miras yoluyla araç devri (4 soru) ve mirasçılık belgesi (3 soru) için yazılan soru metinleri ve seçenekleri proje sahibinin onayını bekliyor.
 - **EGM "Trafik Tescil Hakkında" sayfasının güncelliği:** Sayfa trafik tescil kuruluşunu başvuru yeri olarak gösteriyor; 2018'den beri araç satış/devir işlemleri noterlikte de yapılıyor. Kaynaklar arası olası çelişkiler 3. aşamada yanıtta uyarı olarak gösterilecek.
 
