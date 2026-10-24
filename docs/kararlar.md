@@ -66,6 +66,21 @@
 | 2026-10-24 | Yargıç modeli test edilen modelden farklı (varsayılan `claude-sonnet-5-5`)                         | Aynı modelin kendi çıktısını kayırma eğilimi. **Proje sahibi değiştirebilir.**                            |
 | 2026-10-24 | Altyapı hataları puana katılmaz (`errors.jsonl`); ret, kesilme ve şema hatası ayrı durumlar        | Bir API kesintisi modelin başarısızlığı gibi görünmesin.                                                  |
 
+## Kullanıcı arayüzü (5. aşama)
+
+| Tarih      | Karar                                                                                                               | Gerekçe                                                                                            |
+| ---------- | ------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| 2026-10-24 | Tarayıcı yapay zekâ servisine doğrudan bağlanmaz; web'in `/api/understand` ve `/api/roadmap` uçları üzerinden gider | Servis anahtarı tarayıcıya ulaşmaz; girdi doğrulama ve hız sınırı tek yerde uygulanır.             |
+| 2026-10-24 | Hız sınırı: IP başına 10 dakikada 30 anlama, 10 yol haritası isteği (Redis; yoksa bellek)                           | Yol haritası en pahalı çağrı; kötüye kullanımı ve maliyet sıçramasını sınırlar.                    |
+| 2026-10-24 | Servisten gelen yanıtlar web tarafında da şemayla doğrulanır                                                        | Beklenmeyen veya bozuk bir yanıt kullanıcıya hiç gösterilmez.                                      |
+| 2026-10-24 | Netleştirici sorular tek turda sorulur; metinden çıkarılan cevaplar korunur                                         | "En fazla 3 soru" ilkesi; kullanıcıyı tekrar tekrar sorgulamamak.                                  |
+| 2026-10-24 | Kaynakta ücret yoksa "Kaynakta belirtilmemiş; ilgili kurumdan öğreniniz" yazılır                                    | Boş bırakmak "ücretsiz" sanılabilir; tahmin yazmak ilkeye aykırı.                                  |
+| 2026-10-24 | Kişisel bilgi maskelendiğinde kullanıcı bilgilendirilir                                                             | KVKK açısından şeffaflık.                                                                          |
+| 2026-10-24 | PDF çıktısı tarayıcının yazdırma özelliğiyle (baskı CSS'i); kaynak adresleri çıktıda görünür                        | Sunucuda PDF üretmekten daha basit ve erişilebilir; kâğıtta da kaynak izlenebilir.                 |
+| 2026-10-24 | Adım işaretleme bu aşamada yalnızca tarayıcı belleğinde                                                             | Kalıcı kayıt, hesap sistemiyle birlikte 6. aşamada.                                                |
+| 2026-10-24 | Renk teması deniz yeşili; kırmızı-beyaz devlet teması bilerek kullanılmadı                                          | Kullanıcı resmi bir devlet sitesinde olduğunu sanmamalı.                                           |
+| 2026-10-24 | Uçtan uca testler gerçek web sunucusu + sahte yapay zekâ servisiyle; her aşamada axe-core ile WCAG A/AA denetimi    | Tarayıcı → web → servis zinciri baştan sona sınanır; erişilebilirlik gerilemeleri CI'da yakalanır. |
+
 ## Açık konular
 
 - **Araçların Satış, Devir ve Tescil Hizmetlerinin Yürütülmesi Hakkında Yönetmelik** henüz kaynak listesinde değil: Mevzuat Bilgi Sistemi'ndeki numarası güvenilir şekilde doğrulanamadı. Numara doğrulanınca `config/sources.yaml`'a eklenecek.

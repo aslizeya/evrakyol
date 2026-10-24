@@ -7,8 +7,9 @@ const repoRoot = path.resolve(import.meta.dirname, "../..");
 loadEnvConfig(repoRoot);
 
 const nextConfig: NextConfig = {
-  // Docker imajı için yalnızca gerekli dosyaları içeren bağımsız çıktı
-  output: "standalone",
+  // Docker imajı için yalnızca gerekli dosyaları içeren bağımsız çıktı (Dockerfile açar).
+  // Vercel ve `next start` (uçtan uca testler) için gerekmez.
+  output: process.env.BUILD_STANDALONE === "1" ? "standalone" : undefined,
   outputFileTracingRoot: repoRoot,
   cacheComponents: true,
   partialPrefetching: true,

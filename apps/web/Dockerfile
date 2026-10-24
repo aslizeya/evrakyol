@@ -13,7 +13,8 @@ COPY --from=deps /repo/apps/web/node_modules ./apps/web/node_modules
 COPY apps/web ./apps/web
 COPY config ./config
 WORKDIR /repo/apps/web
-ENV NEXT_TELEMETRY_DISABLED=1
+ENV NEXT_TELEMETRY_DISABLED=1 \
+    BUILD_STANDALONE=1
 RUN npx prisma generate && npm run build
 
 FROM node:24-alpine AS runtime

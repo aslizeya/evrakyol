@@ -69,11 +69,24 @@ Veritabanı olmadan uçtan uca deneme (gerçek LLM çağrısı yapar, `ANTHROPIC
 cd services/api && python -m app.rag demo "Babamdan kalan arabayı üzerime almak istiyorum"
 ```
 
+## Web arayüzü
+
+- **Akış:** Ana sayfadaki tek giriş alanına yazılan metin önce sınıflandırılır. Gerekirse en fazla 3 seçenekli netleştirici soru sorulur, ardından yol haritası gösterilir.
+- **Yol haritası ekranı:** Numaralı adımlar, gerekli evraklar, kurum, ücret (yalnızca kaynakta varsa), kaynak bağlantıları ve son kontrol tarihleri, uyarılar, adım işaretleme ve ilerleme çubuğu bulunur.
+- **PDF / yazdırma:** "Yazdır / PDF olarak kaydet" düğmesi tarayıcının yazdırma penceresini açar. Çıktıda yalnızca yol haritası ve kaynak adresleri yer alır.
+- **Güvenlik:** Tarayıcı yapay zekâ servisine doğrudan bağlanmaz. `/api/understand` ve `/api/roadmap` uçları girdiyi doğrular, IP başına hız sınırı uygular ve isteği servis anahtarıyla iletir.
+
 ## Testler
 
 ```bash
 cd apps/web && npm run lint && npm run typecheck && npm test
 ```
+
+```bash
+cd apps/web && npx playwright install chromium && npm run test:e2e
+```
+
+Uçtan uca testler gerçek web sunucusunu sahte bir yapay zekâ servisiyle birlikte başlatır, akışı masaüstü ve mobil tarayıcıda sınar ve her aşamada axe-core ile WCAG A/AA denetimi yapar.
 
 ```bash
 cd services/api && ruff check . && pytest
