@@ -16,7 +16,7 @@ async function ask(page: Page, text: string) {
 }
 
 test("soru -> netleştirme -> yol haritası akışı; her aşama erişilebilir", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/asistan");
   await expect(page.getByRole("note")).toContainText("Hukuki tavsiye değildir.");
   await expectAccessible(page);
 
@@ -42,7 +42,7 @@ test("soru -> netleştirme -> yol haritası akışı; her aşama erişilebilir",
 });
 
 test("kapsam dışı işlem dürüstçe belirtilir", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/asistan");
   await ask(page, "Babamdan kalan evi üzerime almak istiyorum, tapu devri nasıl olur?");
   await expect(page.getByRole("heading", { name: "Bu işlem henüz desteklenmiyor" })).toBeVisible();
   await page.getByRole("button", { name: "Yeni soru sor" }).click();
@@ -50,7 +50,7 @@ test("kapsam dışı işlem dürüstçe belirtilir", async ({ page }) => {
 });
 
 test("kaynak yoksa yol haritası uydurulmaz, kuruma yönlendirilir", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/asistan");
   await ask(page, "Kaynaksız bir durum: babamdan kalan arabayı almak istiyorum");
   await page.getByRole("radio", { name: "Evet" }).check();
   await page.getByRole("button", { name: "Devam et" }).click();
@@ -62,7 +62,7 @@ test("kaynak yoksa yol haritası uydurulmaz, kuruma yönlendirilir", async ({ pa
 });
 
 test("kişisel bilgi gizlendiğinde kullanıcı bilgilendirilir", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/asistan");
   await ask(page, "TC kimlik numaram 12345678901, babamdan kalan arabayı almak istiyorum");
   await expect(page.getByText(/kişisel bilgiler .* gizlendi/)).toBeVisible();
 });
@@ -70,7 +70,7 @@ test("kişisel bilgi gizlendiğinde kullanıcı bilgilendirilir", async ({ page 
 test("yol haritası yatay kaydırma olmadan sığar ve yazdırmada düğmeler gizlenir", async ({
   page,
 }) => {
-  await page.goto("/");
+  await page.goto("/asistan");
   await ask(page, QUESTION);
   await page.getByRole("radio", { name: "Hayır" }).check();
   await page.getByRole("button", { name: "Devam et" }).click();
@@ -84,4 +84,40 @@ test("yol haritası yatay kaydırma olmadan sığar ve yazdırmada düğmeler gi
   await page.emulateMedia({ media: "print" });
   await expect(page.getByRole("button", { name: "Yazdır / PDF olarak kaydet" })).toBeHidden();
   await expect(page.getByRole("heading", { level: 3 }).first()).toBeVisible();
+});
+
+test("sorularla ilerleyen rehber: işlem seçimi -> sorular -> yol haritası", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.getByRole("note")).toContainText("Hukuki tavsiye değildir.");
+  await expect(page.getByRole("textbox")).toHaveCount(0); // serbest metin istenmez
+  await expectAccessible(page);
+
+  await page.getByRole("button", { name: /Miras yoluyla araç devri/ }).click();
+  const first = page.getByRole("heading", {
+    name: "Mirasçılık belgesi (veraset ilamı) alındı mı?",
+  });
+  await expect(first).toBeFocused();
+  await expect(page.getByText("Soru 1 / 2")).toBeVisible();
+  await expectAccessible(page);
+
+  await page.getByRole("button", { name: "Hayır" }).click();
+  await expect(page.getByRole("heading", { name: "Kaç mirasçı var?" })).toBeFocused();
+
+  // Önceki soruya dönülebilir
+  await page.getByRole("button", { name: "Önceki soru" }).click();
+  await expect(first).toBeFocused();
+  await page.getByRole("button", { name: "Hayır" }).click();
+  await page.getByRole("button", { name: "Tek mirasçı" }).click();
+
+  await expect(page.getByRole("heading", { name: "Yol haritanız", exact: true })).toBeFocused();
+  await expect(page.locator("li[data-step]")).toHaveCount(2);
+  await expectAccessible(page);
+});
+
+test("işlem kartındaki bağlantı rehberi doğrudan başlatır", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("link", { name: "Rehberi başlat →" }).first().click();
+  await expect(
+    page.getByRole("heading", { name: "Mirasçılık belgesi (veraset ilamı) alındı mı?" }),
+  ).toBeVisible();
 });

@@ -74,3 +74,27 @@ export type UnderstandResponse = z.infer<typeof understandResponseSchema>;
 export type Roadmap = z.infer<typeof roadmapSchema>;
 export type RoadmapStep = z.infer<typeof stepSchema>;
 export type RoadmapResponse = z.infer<typeof roadmapResponseSchema>;
+
+// --- Sorularla ilerleyen rehber (yapay zekâ gerektirmez) ---
+
+export const guideRequestSchema = z.object({
+  islem: z.string().min(1).max(64),
+  cevaplar: answersSchema.default({}),
+});
+
+export const guideResponseSchema = z.object({
+  durum: z.enum(["soru", "tamam", "kaynak_yok"]),
+  cevaplar: z.record(z.string(), z.string()),
+  soru: z
+    .object({ anahtar: z.string(), metin: z.string(), secenekler: z.array(z.string()).min(2) })
+    .nullable()
+    .optional(),
+  ilerleme: z
+    .object({ cevaplanan: z.number().int(), toplam: z.number().int() })
+    .nullable()
+    .optional(),
+  yol_haritasi: roadmapSchema.nullable().optional(),
+  mesaj: z.string().nullable().optional(),
+});
+
+export type GuideResponse = z.infer<typeof guideResponseSchema>;

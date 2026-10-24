@@ -1,0 +1,140 @@
+# Sorularla ilerleyen rehber: Mirasçılık belgesi (veraset ilamı)
+# Kurallar için bkz. miras_arac_devri.yaml başındaki açıklama.
+# `goster_eger` bir liste ise koşullardan herhangi birinin sağlanması yeterlidir (VEYA).
+
+islem: mirascilik_belgesi
+onaylandi: false
+ozet: >-
+  Mirasçılık belgesi noterden veya sulh hukuk mahkemesinden alınır. Noterin belge veremediği
+  durumlarda başvuru sulh hukuk mahkemesine yapılır.
+
+sorular:
+  - anahtar: vasiyetname
+  - anahtar: ozel_durum
+  - anahtar: basvuru_yeri
+    sor_eger:
+      vasiyetname: [Yok, Bilmiyorum]
+      ozel_durum: [Hayır, Bilmiyorum]
+
+adimlar:
+  - id: noterden_basvuru
+    goster_eger:
+      vasiyetname: [Yok, Bilmiyorum]
+      ozel_durum: [Hayır, Bilmiyorum]
+      basvuru_yeri: [Noter, Fark etmez]
+    baslik: Bir noterliğe başvurun
+    aciklama: >-
+      Noterlikte verilen başvuru formu doldurulup imzalanır. Mirasçılık belgesi sistem tarafından
+      yaklaşık üç dakika içinde hazırlanır ve noter tarafından doğrulanır.
+    gerekli_evraklar:
+      - T.C. kimlik numarası yazılı kimlik belgesi
+      - Temsilen başvuruluyorsa vekâletname veya mahkeme kararı
+      - Miras bırakanın T.C. kimlik numarası (bilinmiyorsa noterlikte tespit edilir)
+    kurum: Herhangi bir noterlik
+    dayanaklar:
+      - kaynak: &tnb https://portal.tnb.org.tr/Sayfalar/MirascilikHiz.aspx
+        alinti: >-
+          Aşağıdaki belgeler ile bir noterliğe gidiniz: T.C. Kimlik Numarası yazılı olan kimlik
+          belgesi, Temsilen başvuru yapılıyor ise Vekaletname ya da Mahkeme Kararı,Miras Bırakan
+          kişiye ait T.C. Kimlik Numarası, (eğer bu bilgiye erişemiyorsanız noterlikte tespit
+          edilecektir.)
+      - kaynak: *tnb
+        alinti: >-
+          Noterlikte size verilecek olan başvuru formunu doldurunuz ve imzalayınız, Mirasçılık
+          Belgesi sistem tarafından yaklaşık üç dakika içerisinde hazırlanacaktır. Hazırlanan
+          Mirasçılık Belgesi Noter tarafından doğrulanacaktır.
+
+  - id: nufus_kaydi_eksikligi
+    goster_eger:
+      vasiyetname: [Yok, Bilmiyorum]
+      ozel_durum: [Hayır, Bilmiyorum]
+      basvuru_yeri: [Noter, Fark etmez]
+    baslik: Nüfus kaydında eksiklik çıkarsa Nüfus Müdürlüğüne gidin
+    aciklama: >-
+      Sizin veya yakınınızın nüfus kayıtlarında eksiklik tespit edilirse noter bilgi verip Nüfus
+      Müdürlüğüne yönlendirir. Kayıtlar düzeltildikten sonra noterliğe yeniden başvurulabilir.
+    gerekli_evraklar: []
+    kurum: Nüfus Müdürlüğü
+    dayanaklar:
+      - kaynak: *tnb
+        alinti: >-
+          Size ya da yakınınıza ait Nüfus kayıtlarında bir eksiklik tespit edilir ise Noter size
+          bilgi vererek Nüfus Müdürlüğüne yönlendirecektir. Nüfus kayıtları düzeltildikten sonra
+          tekrar noterliğe başvurabilirsiniz.
+
+  - id: sulh_hukuk_mahkemesi
+    goster_eger:
+      - vasiyetname: [Var]
+      - ozel_durum: [Evet]
+      - basvuru_yeri: [Sulh hukuk mahkemesi]
+    baslik: Sulh hukuk mahkemesine başvurun
+    aciklama: >-
+      Mirasçılık belgesi sulh hukuk hâkiminden de alınır. Noter şu durumlarda belge veremez:
+      miras bırakanın vasiyetnamesi bulunması, 04/04/1926'dan önce ya da eşi sağken 23/11/1990'dan
+      önce vefat etmiş olması; miras bırakanın veya mirasçılardan birinin mirasçılardan biriyle
+      aynı gün vefat etmiş, gaip ya da evlatlık olması, vatandaşlıktan çıkarılmış veya birden çok
+      vatandaşlığa sahip olması; soybağının tespit edilememesi ya da yasal mirasçı olmaması. Bu
+      durumlarda noter "Red Belgesi" verip sulh hukuk mahkemesine yönlendirir.
+    gerekli_evraklar: []
+    kurum: Sulh hukuk mahkemesi
+    dayanaklar:
+      - kaynak: *tnb
+        alinti: >-
+          Sulh Hukuk Hakim’inden yahut noterlerden alınan belgeye veraset ilamı yani mirasçılık
+          belgesi denir
+      - kaynak: *tnb
+        alinti: >-
+          Mirasçılık Belgesi’nin Noterlik tarafından verilemeyeceği durumlar Miras Bırakan ile
+          Mirasçılık Belgesi talep eden kişinin Soybağının tespit edilememesi, Soybağının olması
+          ancak yasal Mirasçısı olmaması, Miras Bırakan kişinin, Vasiyetnamesi bulunması,
+          04/04/1926 tarihinden önce vefat etmiş olması, 23/11/1990 tarihinden önce vefat etmiş ve
+          eşinin sağ olması, Miras Bırakan kişinin ya da mirasçılardan herhangi birinin,
+          Mirasçılarından herhangi biri ile aynı gün vefat etmiş olması, ‘GAİP’ olması, Evlatlık
+          olması, Vatandaşlıktan çıkarılmış ya da birden çok vatandaşlığa sahip olması
+      - kaynak: *tnb
+        alinti: >-
+          Noter, size “Red Belgesi” vererek Sulh Hukuk Mahkemesine yönlendirecektir.
+
+uyarilar:
+  - goster_eger:
+      - vasiyetname: [Bilmiyorum]
+      - ozel_durum: [Bilmiyorum]
+    metin: >-
+      Noter, belge verilmesine engel bir durum tespit ederse "Red Belgesi" verip sulh hukuk
+      mahkemesine yönlendirir.
+    dayanaklar:
+      - kaynak: *tnb
+        alinti: >-
+          Noterlik Kanunu gereği mirasçılık belgesi verilmesine engel bir durum tespit edildiğinde;
+          Noter, size “Red Belgesi” vererek Sulh Hukuk Mahkemesine yönlendirecektir.
+  - metin: >-
+      Noterliklerde yapılan mirasçılık belgesi işlemlerine ilişkin bilgilere e-Devlet Kapısı'ndaki
+      "Veraset İlamı Sorgulama" hizmetinden erişilebilir.
+    dayanaklar:
+      - kaynak: *tnb
+        alinti: >-
+          E-Devlet kapısında bulunan “Veraset İlamı Sorgulama" hizmeti üzerinden noterliklerde
+          yapılan mirasçılık belgesi işlemlerine dair bilgilere erişilebilmektedir.
+  - metin: >-
+      Sonraki adım: Miras kalan mal istisna tutarının altında kalsa bile veraset ve intikal vergisi
+      beyannamesi verilmelidir. Ölüm Türkiye'de olduysa ve mirasçılar Türkiye'deyse süre, ölüm
+      tarihini takip eden 4 aydır. Mirasçılık belgesi beyannameye eklenecek belgeler arasındadır.
+    dayanaklar:
+      - kaynak: &gib https://cdn.gib.gov.tr/api/gibportal-file/file/getFile?objectKey=PAGE%2FUNIVERSAL%2F2026%2F2026_VerasetveIntikal_Vergisi_Brosuru.pdf
+        alinti: >-
+          Veraset yoluyla intikal eden mal, istisna haddinin altında kalsa dahi veraset ve intikal
+          vergisi beyannamesi verilmesi gerekmektedir.
+      - kaynak: *gib
+        alinti: Mükellefler Türkiye’de bulunuyorsa ölüm tarihini takip eden 4 ay içinde
+      - kaynak: *gib
+        alinti: Veraset ilamı (mirasçılık belgesi)
+
+notlar:
+  - goster_eger:
+      - vasiyetname: [Var]
+      - ozel_durum: [Evet]
+      - basvuru_yeri: [Sulh hukuk mahkemesi]
+    metin: >-
+      Sulh hukuk mahkemesine başvurunun usulü, gerekli belgeler ve masraflar taranan resmi
+      kaynaklarda yer almıyor. Başvurudan önce ilgili adliyedeki sulh hukuk mahkemesi ile
+      görüşünüz.

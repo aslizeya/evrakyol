@@ -75,7 +75,39 @@ function roadmap({ text }) {
   return { status: "ok", masked_text: text, roadmap: ROADMAP };
 }
 
-const routes = { "/v1/understand": understand, "/v1/roadmap": roadmap };
+// Sorularla ilerleyen rehber: iki soru, ardından yol haritası
+const GUIDE_QUESTIONS = [
+  {
+    anahtar: "mirascilik_belgesi",
+    metin: "Mirasçılık belgesi (veraset ilamı) alındı mı?",
+    secenekler: ["Evet", "Hayır", "Bilmiyorum"],
+  },
+  {
+    anahtar: "mirasci_sayisi",
+    metin: "Kaç mirasçı var?",
+    secenekler: ["Tek mirasçı", "Birden fazla mirasçı", "Bilmiyorum"],
+  },
+];
+
+function rehber({ islem, cevaplar = {} }) {
+  const answers = {};
+  for (const q of GUIDE_QUESTIONS) {
+    if (!(q.anahtar in cevaplar)) break;
+    answers[q.anahtar] = cevaplar[q.anahtar];
+  }
+  const next = GUIDE_QUESTIONS.find((q) => !(q.anahtar in answers));
+  if (next) {
+    return {
+      durum: "soru",
+      cevaplar: answers,
+      soru: next,
+      ilerleme: { cevaplanan: Object.keys(answers).length, toplam: GUIDE_QUESTIONS.length },
+    };
+  }
+  return { durum: "tamam", cevaplar: answers, yol_haritasi: { ...ROADMAP, islem } };
+}
+
+const routes = { "/v1/understand": understand, "/v1/roadmap": roadmap, "/v1/rehber": rehber };
 
 createServer((req, res) => {
   const send = (status, payload) => {

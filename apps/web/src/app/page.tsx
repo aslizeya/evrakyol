@@ -1,6 +1,8 @@
-import { AssistantFlow } from "@/components/assistant/AssistantFlow";
 import { HowItWorks, Principles, ProcessGrid } from "@/components/home/HomeSections";
 import { ShieldIcon } from "@/components/icons";
+import { Suspense } from "react";
+import { GuidedFlow } from "@/components/rehber/GuidedFlow";
+import { GuidedFlowFromUrl } from "@/components/rehber/GuidedFlowFromUrl";
 
 export default function Home() {
   return (
@@ -21,12 +23,17 @@ export default function Home() {
               öğrenin
             </h1>
             <p className="max-w-2xl text-lg text-pretty text-muted">
-              İşleminizi kendi cümlelerinizle anlatın; hangi evrakın gerektiğini, hangi kuruma
-              gideceğinizi ve adımların sırasını resmi kaynaklarıyla birlikte gösterelim.
+              Birkaç kısa soruyu yanıtlayın; hangi evrakın gerektiğini, hangi kuruma gideceğinizi ve
+              adımların sırasını resmi kaynaklarıyla birlikte gösterelim.
             </p>
           </header>
-          <div className="rounded-3xl border border-border bg-background p-5 shadow-card sm:p-8">
-            <AssistantFlow />
+          <div
+            id="rehber"
+            className="scroll-mt-20 rounded-3xl border border-border bg-background p-5 shadow-card sm:p-8"
+          >
+            <Suspense fallback={<GuidedFlow />}>
+              <GuidedFlowFromUrl />
+            </Suspense>
           </div>
         </div>
       </div>

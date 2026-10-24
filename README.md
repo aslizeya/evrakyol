@@ -44,7 +44,7 @@ Web: http://localhost:3000
 Veritabanı yerine kaynakları canlı çekip bellekte arayan yerel deneme kipi (yalnızca geliştirme içindir):
 
 1. `.env.example` dosyasını `.env` olarak kopyalayın.
-2. `.env` içinde `RETRIEVER_BACKEND=memory` yapın, `INTERNAL_API_TOKEN` için uzun ve rastgele bir değer girin, `ANTHROPIC_API_KEY` alanına kendi anahtarınızı yazın.
+2. `.env` içinde `RETRIEVER_BACKEND=memory` yapın ve `INTERNAL_API_TOKEN` için uzun ve rastgele bir değer girin. Sorularla ilerleyen rehber yapay zekâ gerektirmez; serbest metin akışı (`/asistan`) için ayrıca `ANTHROPIC_API_KEY` gerekir.
 3. Servisleri başlatın:
 
 ```bash
@@ -72,7 +72,16 @@ docker compose exec api python -m app.ingest status   # kaynakların son durumu
 - Giriş ekranı gösteren sayfalar (ör. e-Devlet hizmet sayfaları) ve çok kısa içerikler kaynak olarak kabul edilmez.
 - Veritabanına yazmadan bir adresin nasıl ayıklanacağını görmek için: `python -m app.ingest preview <URL>`
 
-## Yanıt üretimi
+## Sorularla ilerleyen rehber
+
+Ana sayfadaki akış yapay zekâ kullanmaz. Kullanıcı işlemi seçer, ardından seçenekli soruları tek tek yanıtlar; cevaplara uyan adımlardan yol haritası oluşturulur. Serbest metin ve kişisel veri istenmez, cevaplar saklanmaz.
+
+- **İçerik:** [config/rehber/](config/rehber/) altında işlem başına bir YAML dosyası. Her adım ve uyarı, [config/sources.yaml](config/sources.yaml) listesindeki bir kaynaktan birebir alıntıya dayanır; adımlar `goster_eger` koşullarıyla cevaplara bağlanır. Kaynakta karşılığı olmayan durumlar için bilgi yazılmaz, `notlar` ile kuruma yönlendirilir.
+- **Doğrulama:** `python -m app.rehber kontrol` her alıntıyı kaynağın güncel metninde arar ve sonucu `config/rehber/dogrulama.json` dosyasına yazar. Çalışma anında yalnızca alıntıları doğrulanmış adımlar gösterilir; kaynak sayfası değişip alıntı kaybolursa ilgili adım kendiliğinden gizlenir ve komut hata koduyla çıkar.
+- **Onay:** `onaylandi: false` olan içerikte kullanıcıya "henüz uzman onayından geçmemiştir" uyarısı gösterilir.
+- **Uç nokta:** `POST /v1/rehber` durumsuzdur: o ana kadarki cevapları alır, sıradaki soruyu ya da yol haritasını döndürür.
+
+## Yanıt üretimi (yapay zekâ, deneysel)
 
 API iki uç nokta sunar (servis anahtarıyla, yalnızca web uygulaması çağırır):
 
@@ -89,10 +98,10 @@ cd services/api && python -m app.rag demo "Babamdan kalan arabayı üzerime alma
 
 ## Web arayüzü
 
-- **Akış:** Ana sayfadaki tek giriş alanına yazılan metin önce sınıflandırılır. Gerekirse en fazla 3 seçenekli netleştirici soru sorulur, ardından yol haritası gösterilir.
+- **Akış:** Ana sayfada sorularla ilerleyen rehber yer alır (her ekranda tek soru, geri dönülebilir). Serbest metinle soru sorma deneysel olarak `/asistan` sayfasındadır: metin sınıflandırılır, gerekirse en fazla 3 seçenekli soru sorulur, ardından yol haritası gösterilir.
 - **Yol haritası ekranı:** Numaralı adımlar, gerekli evraklar, kurum, ücret (yalnızca kaynakta varsa), kaynak bağlantıları ve son kontrol tarihleri, uyarılar, adım işaretleme ve ilerleme çubuğu bulunur.
 - **PDF / yazdırma:** "Yazdır / PDF olarak kaydet" düğmesi tarayıcının yazdırma penceresini açar. Çıktıda yalnızca yol haritası ve kaynak adresleri yer alır.
-- **Güvenlik:** Tarayıcı yapay zekâ servisine doğrudan bağlanmaz. `/api/understand` ve `/api/roadmap` uçları girdiyi doğrular, IP başına hız sınırı uygular ve isteği servis anahtarıyla iletir.
+- **Güvenlik:** Tarayıcı yapay zekâ servisine doğrudan bağlanmaz. `/api/rehber`, `/api/understand` ve `/api/roadmap` uçları girdiyi doğrular, IP başına hız sınırı uygular ve isteği servis anahtarıyla iletir.
 
 ## Testler
 

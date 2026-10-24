@@ -1,7 +1,9 @@
 import type { z } from "zod";
 import {
+  guideResponseSchema,
   roadmapResponseSchema,
   understandResponseSchema,
+  type GuideResponse,
   type RoadmapResponse,
   type UnderstandResponse,
 } from "@/lib/api-schemas";
@@ -48,4 +50,11 @@ export function requestRoadmap(
   answers: Record<string, string>,
 ): Promise<ClientResult<RoadmapResponse>> {
   return post("/api/roadmap", { text, process_code: processCode, answers }, roadmapResponseSchema);
+}
+
+export function requestGuideStep(
+  islem: string,
+  cevaplar: Record<string, string>,
+): Promise<ClientResult<GuideResponse>> {
+  return post("/api/rehber", { islem, cevaplar }, guideResponseSchema);
 }

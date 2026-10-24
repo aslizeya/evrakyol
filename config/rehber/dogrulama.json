@@ -1,0 +1,51 @@
+{
+  "kaynaklar": {
+    "https://cdn.gib.gov.tr/api/gibportal-file/file/getFile?objectKey=PAGE%2FUNIVERSAL%2F2026%2F2026_VerasetveIntikal_Vergisi_Brosuru.pdf": {
+      "son_kontrol": "2026-10-24",
+      "durum": "ok"
+    },
+    "https://portal.tnb.org.tr/Sayfalar/MirascilikHiz.aspx": {
+      "son_kontrol": "2026-10-24",
+      "durum": "ok"
+    },
+    "https://www.egm.gov.tr/trafik-tescil-hakkinda": {
+      "son_kontrol": "2026-10-24",
+      "durum": "ok"
+    },
+    "https://www.trafik.gov.tr/trafik-guvenliginin-artirilmasina-yonelik-kanuni-duzenleme-tbmm-genel-kurulunda-kabul-edilerek-resmi-gazetede-yayimlandi": {
+      "son_kontrol": "2026-10-24",
+      "durum": "ok"
+    }
+  },
+  "alintilar": {
+    "009e1fd1d962a804": true,
+    "13ebf194a17ac09a": true,
+    "3116ec3977f51f19": true,
+    "3c2db36ea587a0c6": true,
+    "40e5a3c8e8497548": true,
+    "45220a68d909c92d": true,
+    "473b44f2d14a6c94": true,
+    "510756a3a755a210": true,
+    "557eafcc88e12b1a": true,
+    "58fb248b681c9ad2": true,
+    "5fea5a97eb03a424": true,
+    "632052029d13e5f5": true,
+    "6bf429a824207df3": true,
+    "6f886062a1e831e8": true,
+    "720f70eba1d6f19d": true,
+    "798bedc4e4b56ab4": true,
+    "833c578a24ac9a1b": true,
+    "8c20a113a84a5013": true,
+    "930399b2dfb5ef8b": true,
+    "966e525a1560af50": true,
+    "a5adc9bb9d1f5e6c": true,
+    "a686ae8026115294": true,
+    "acf4b0c824c04e18": true,
+    "b765ee012b96d832": true,
+    "b7e54262b719188f": true,
+    "c7c55db501668e2d": true,
+    "c9bc9fa8657025f9": true,
+    "e1924b3a4394f73c": true,
+    "ec600cf7419568a0": true
+  }
+}

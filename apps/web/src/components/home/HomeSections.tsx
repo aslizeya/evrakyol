@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { ComponentType, SVGProps } from "react";
 import {
   CarIcon,
@@ -18,28 +19,28 @@ import {
 
 type IconType = ComponentType<SVGProps<SVGSVGElement>>;
 
-// İşlem adları config/process_types.json ile aynıdır; `ready` alanı yol haritası üretimi için
-// kaynakları toplanmış (MVP) işlemleri gösterir.
-const PROCESSES: { name: string; icon: IconType; ready: boolean }[] = [
-  { name: "Miras yoluyla araç devri", icon: CarIcon, ready: true },
-  { name: "Mirasçılık belgesi (veraset ilamı)", icon: ScrollIcon, ready: true },
-  { name: "İkinci el araç alım-satım devri", icon: SteeringIcon, ready: false },
-  { name: "Pasaport başvurusu ve yenileme", icon: PassportIcon, ready: false },
-  { name: "Yurt dışından getirilen telefonun IMEI kaydı", icon: PhoneIcon, ready: false },
-  { name: "İkametgâh / yerleşim yeri belgesi", icon: HomeIcon, ready: false },
-  { name: "Kimlik kartı yenileme", icon: IdCardIcon, ready: false },
-  { name: "Ehliyet yenileme / değişimi", icon: DocumentIcon, ready: false },
+// İşlem adları ve kodları config/process_types.json ile aynıdır. `code` verilenlerin sorularla
+// ilerleyen rehberi hazırdır (config/rehber/).
+const PROCESSES: { name: string; icon: IconType; code?: string }[] = [
+  { name: "Miras yoluyla araç devri", icon: CarIcon, code: "miras_arac_devri" },
+  { name: "Mirasçılık belgesi (veraset ilamı)", icon: ScrollIcon, code: "mirascilik_belgesi" },
+  { name: "İkinci el araç alım-satım devri", icon: SteeringIcon },
+  { name: "Pasaport başvurusu ve yenileme", icon: PassportIcon },
+  { name: "Yurt dışından getirilen telefonun IMEI kaydı", icon: PhoneIcon },
+  { name: "İkametgâh / yerleşim yeri belgesi", icon: HomeIcon },
+  { name: "Kimlik kartı yenileme", icon: IdCardIcon },
+  { name: "Ehliyet yenileme / değişimi", icon: DocumentIcon },
 ];
 
 const STEPS: { title: string; text: string; icon: IconType }[] = [
   {
-    title: "Durumunuzu anlatın",
-    text: "Form doldurmak yok. Ne yapmak istediğinizi günlük dilde birkaç cümleyle yazın.",
+    title: "İşleminizi seçin",
+    text: "Yapmak istediğiniz resmi işlemi listeden seçin; uzun formlar doldurmanız gerekmez.",
     icon: ChatIcon,
   },
   {
-    title: "Kısa sorulara yanıt verin",
-    text: "Gerekirse en fazla üç kısa soru sorulur; böylece size uymayan adımlar elenir.",
+    title: "Kısa soruları yanıtlayın",
+    text: "Durumunuza dair birkaç soruyu seçeneklerden işaretleyin; size uymayan adımlar elenir.",
     icon: QuestionIcon,
   },
   {
@@ -62,7 +63,7 @@ const PRINCIPLES: { title: string; text: string; icon: IconType }[] = [
   },
   {
     title: "Kişisel veri istenmez",
-    text: "T.C. kimlik numarası, plaka veya adres sorulmaz; yanlışlıkla yazılanlar otomatik gizlenir.",
+    text: "Yalnızca seçenekli sorular sorulur; T.C. kimlik numarası, plaka, adres gibi bilgiler istenmez ve cevaplar saklanmaz.",
     icon: LockIcon,
   },
 ];
@@ -127,32 +128,43 @@ export function ProcessGrid() {
         title="Hangi işlemlerde yardımcı olur?"
       />
       <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {PROCESSES.map(({ name, icon: ProcessIcon, ready }) => (
-          <li
-            key={name}
-            className={`flex flex-col gap-4 rounded-2xl border p-5 ${
-              ready ? "border-accent/40 bg-accent-soft/40" : "border-border bg-surface"
-            }`}
-          >
-            <div className="flex items-start justify-between gap-2">
-              <span
-                className={`flex size-10 items-center justify-center rounded-xl ${
-                  ready ? "bg-accent text-accent-foreground" : "bg-background text-muted"
-                }`}
-              >
-                <ProcessIcon className="size-5" />
-              </span>
-              <span
-                className={`rounded-full px-2.5 py-1 text-xs font-medium ${
-                  ready ? "bg-accent-soft text-accent-soft-fg" : "bg-background text-muted"
-                }`}
-              >
-                {ready ? "Hazır" : "Yakında"}
-              </span>
-            </div>
-            <p className="font-medium">{name}</p>
-          </li>
-        ))}
+        {PROCESSES.map(({ name, icon: ProcessIcon, code }) => {
+          const ready = Boolean(code);
+          return (
+            <li
+              key={name}
+              className={`flex flex-col gap-4 rounded-2xl border p-5 ${
+                ready ? "border-accent/40 bg-accent-soft/40" : "border-border bg-surface"
+              }`}
+            >
+              <div className="flex items-start justify-between gap-2">
+                <span
+                  className={`flex size-10 items-center justify-center rounded-xl ${
+                    ready ? "bg-accent text-accent-foreground" : "bg-background text-muted"
+                  }`}
+                >
+                  <ProcessIcon className="size-5" />
+                </span>
+                <span
+                  className={`rounded-full px-2.5 py-1 text-xs font-medium ${
+                    ready ? "bg-accent-soft text-accent-soft-fg" : "bg-background text-muted"
+                  }`}
+                >
+                  {ready ? "Hazır" : "Yakında"}
+                </span>
+              </div>
+              <p className="font-medium">{name}</p>
+              {code ? (
+                <Link
+                  href={`/?islem=${code}#rehber`}
+                  className="mt-auto w-fit rounded-lg text-sm font-medium text-accent underline-offset-4 hover:underline"
+                >
+                  Rehberi başlat →
+                </Link>
+              ) : null}
+            </li>
+          );
+        })}
       </ul>
     </section>
   );

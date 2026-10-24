@@ -1,0 +1,240 @@
+# Sorularla ilerleyen rehber: Miras yoluyla araç devri
+#
+# Kurallar:
+# - Her adım ve uyarı, `dayanaklar` altındaki resmi kaynaktan BİREBİR alıntıya dayanır.
+#   Alıntılar `python -m app.rehber kontrol` komutuyla kaynağın güncel metninde aranır.
+# - Adım metinleri (başlık, açıklama, evraklar) alıntının söylediğinden fazlasını söylemez.
+# - Kaynakta karşılığı olmayan durumlarda bilgi yazılmaz; `notlar` ile kuruma yönlendirilir.
+# - `goster_eger`: yalnızca verilen cevaplarda gösterilir (yoksa her zaman gösterilir).
+#   Sorulmamış bir sorunun cevabı "(sorulmadı)" sayılır.
+# - `onaylandi`: içerik proje sahibi tarafından gözden geçirildiğinde true yapılır.
+
+islem: miras_arac_devri
+onaylandi: false
+ozet: >-
+  Mirasçılar; mirasçılık belgesi, veraset ve intikal vergisi işlemleri ve gerekli evraklarla
+  yerleşim yerlerindeki trafik tescil kuruluşuna başvurarak aracı adlarına tescil ettirir.
+
+# Sorular config/process_types.json'daki netleştirici sorulardır; burada sırası ve
+# hangi durumda sorulacağı belirlenir.
+sorular:
+  - anahtar: mirascilik_belgesi
+  - anahtar: mirasci_sayisi
+  - anahtar: tescil_tercihi
+    sor_eger:
+      mirasci_sayisi: [Birden fazla mirasçı, Bilmiyorum]
+  - anahtar: kisitlama
+
+adimlar:
+  - id: mirascilik_belgesi_alin
+    goster_eger:
+      mirascilik_belgesi: [Hayır, Bilmiyorum]
+    baslik: Mirasçılık belgesi (veraset ilamı) alın
+    aciklama: >-
+      Mirasçılık belgesi noterden veya sulh hukuk mahkemesinden alınır. Noterde başvuru formu
+      doldurulur ve belge sistem tarafından yaklaşık üç dakika içinde hazırlanır.
+    gerekli_evraklar:
+      - T.C. kimlik numarası yazılı kimlik belgesi
+      - Temsilen başvuruluyorsa vekâletname veya mahkeme kararı
+      - Miras bırakanın T.C. kimlik numarası (bilinmiyorsa noterlikte tespit edilir)
+    kurum: Noterlik veya sulh hukuk mahkemesi
+    dayanaklar:
+      - kaynak: https://portal.tnb.org.tr/Sayfalar/MirascilikHiz.aspx
+        alinti: >-
+          Sulh Hukuk Hakim’inden yahut noterlerden alınan belgeye veraset ilamı yani mirasçılık
+          belgesi denir
+      - kaynak: https://portal.tnb.org.tr/Sayfalar/MirascilikHiz.aspx
+        alinti: >-
+          Aşağıdaki belgeler ile bir noterliğe gidiniz: T.C. Kimlik Numarası yazılı olan kimlik
+          belgesi, Temsilen başvuru yapılıyor ise Vekaletname ya da Mahkeme Kararı,Miras Bırakan
+          kişiye ait T.C. Kimlik Numarası, (eğer bu bilgiye erişemiyorsanız noterlikte tespit
+          edilecektir.)
+      - kaynak: https://portal.tnb.org.tr/Sayfalar/MirascilikHiz.aspx
+        alinti: Mirasçılık Belgesi sistem tarafından yaklaşık üç dakika içerisinde hazırlanacaktır.
+
+  - id: veraset_beyannamesi
+    baslik: Veraset ve intikal vergisi beyannamesini verin
+    aciklama: >-
+      Beyanname, miras kalan mal istisna tutarının altında kalsa bile verilmelidir. Ölenin
+      ikametgâhının bulunduğu yerdeki vergi dairesine kâğıt ortamında elden veya posta yoluyla
+      verilir; mirasçılar ayrı ayrı ya da birlikte verebilir. Ölüm Türkiye'de olduysa ve
+      mirasçılar Türkiye'deyse süre, ölüm tarihini takip eden 4 aydır. Ölenin ikametgâhı Ankara,
+      İstanbul veya İzmir'deyse defterdarlık sitesinden randevu alınır.
+    gerekli_evraklar:
+      - Veraset ilamı (mirasçılık belgesi)
+      - Vefat eden kişinin son ikametgâhını gösteren nüfus kayıt belgesi
+      - Araç tescil belgesinin fotokopisi
+      - Varsa vasiyetname veya miras mukavelenamesi
+      - Varsa borç ve masraflara ait belgeler
+    kurum: Ölenin ikametgâhının bulunduğu yerdeki vergi dairesi
+    dayanaklar:
+      - kaynak: &gib https://cdn.gib.gov.tr/api/gibportal-file/file/getFile?objectKey=PAGE%2FUNIVERSAL%2F2026%2F2026_VerasetveIntikal_Vergisi_Brosuru.pdf
+        alinti: >-
+          Veraset yoluyla intikal eden mal, istisna haddinin altında kalsa dahi veraset ve intikal
+          vergisi beyannamesi verilmesi gerekmektedir.
+      - kaynak: *gib
+        alinti: >-
+          Mükellefler, Veraset ve İntikal Vergisi Beyannamesini kâğıt ortamında vergi dairesine
+          elden veya posta yoluyla verebilir.
+      - kaynak: *gib
+        alinti: >-
+          Veraset yoluyla intikallerde beyanname her bir mirasçı tarafından ayrı ayrı
+          verilebileceği gibi müştereken verilmesi de mümkündür.
+      - kaynak: *gib
+        alinti: >-
+          Veraset yoluyla gerçekleşen intikallerde ölen kimsenin ikametgâhının bulunduğu
+      - kaynak: *gib
+        alinti: >-
+          Mükellefler Türkiye’de bulunuyorsa ölüm tarihini takip eden 4 ay içinde
+      - kaynak: *gib
+        alinti: >-
+          Vefat eden kişinin ikametgâhı Ankara, İstanbul ve İzmir illerinde bulunuyorsa ilgili
+          illerin defterdarlık web sitelerinde yer alan veraset işlemleri randevu başlığından
+          randevu almak suretiyle
+      - kaynak: *gib
+        alinti: >-
+          Veraset ilamı (mirasçılık belgesi), • Nüfus kayıt sisteminden alınan vefat eden kişinin
+          son ikametgâhını gösterir belge, • Vasiyetname, miras mukavelenamesi, • Borç ve
+          masraflara ait belgeler
+      - kaynak: *gib
+        alinti: Araç ve tescile tabi diğer menkuller için tescil belgesinin fotokopisi
+
+  - id: vergi_borcu_yoktur_belgesi
+    baslik: Vergi dairesinden "borcu yoktur" ve ilişik kesme belgelerini alın
+    aciklama: >-
+      Trafik tescil kuruluşu, veraset intikali yönünden borç olmadığına dair belge ile vergi
+      borcu bulunmadığına dair ilişik kesme belgesini ister. Gelir İdaresi'ne göre ilişik kesme
+      yazısı, beyanname verilip vergi borcu ödendikten sonra alınabilir. Veraset ve intikal
+      vergisi, tahakkukundan itibaren 3 yılda, her yıl mayıs ve kasım aylarında olmak üzere 6
+      eşit taksitte ödenir.
+    gerekli_evraklar: []
+    kurum: Vergi dairesi
+    dayanaklar:
+      - kaynak: &egm https://www.egm.gov.tr/trafik-tescil-hakkinda
+        alinti: >-
+          Vergi dairesinden alınan veraset intikali yönünden borcu olmadığına dair belgenin, 4-
+          Vergi borcunun bulunmadığına dair vergi dairesinden alınan ilişik kesme belgesinin
+      - kaynak: *gib
+        alinti: >-
+          Veraset ve İntikal Vergisi Beyannamesi verilip, vergi borcu ödendikten sonra ilgili
+          vergi dairesinden ilişik kesme yazısı (borcu yoktur) alınabilir.
+      - kaynak: *gib
+        alinti: >-
+          Tahakkukundan itibaren 3 yılda ve her yıl mayıs ve kasım aylarında olmak üzere toplam 6
+          eşit taksitte
+
+  - id: miras_taksim_veya_feragat
+    goster_eger:
+      tescil_tercihi: [Mirasçılardan biri adına]
+    baslik: Noterde miras taksim sözleşmesi veya feragatname düzenletin
+    aciklama: >-
+      Aracın mirasçılardan yalnızca biri adına tescil edilmesi için noterden miras taksim
+      sözleşmesi ya da feragatname düzenlenir; bu belgeyle başvurulduğunda araç, lehine feragat
+      edilen mirasçı adına tescil edilebilir.
+    gerekli_evraklar: []
+    kurum: Noterlik
+    dayanaklar:
+      - kaynak: *egm
+        alinti: >-
+          noterden miras taksim sözleşmesi düzenlenmesi veya noterden düzenlenen feragatname ile
+          müracaat edilmesi halinde feragat edilen mirasçı adına araç tescil edilebilir.
+
+  - id: sigorta_ve_muayene
+    baslik: Zorunlu trafik sigortasını mirasçılar adına yaptırın, muayeneyi kontrol edin
+    aciklama: >-
+      Zorunlu mali sorumluluk sigorta poliçesi varis veya varisler adına olmalıdır. Tescil işlemi
+      için aracın geçerli muayenesinin bulunması zorunludur.
+    gerekli_evraklar:
+      - Zorunlu mali sorumluluk sigorta poliçesi (varis/varisler adına)
+    kurum: Sigorta şirketi; gerekirse araç muayene istasyonu
+    dayanaklar:
+      - kaynak: *egm
+        alinti: Zorunlu mali sorumluluk sigorta poliçesinin (varis/varisler adına)
+      - kaynak: *egm
+        alinti: Tescil işlemi için aracın geçerli muayenesinin bulunması zorunludur.
+
+  - id: tescil_basvurusu
+    baslik: Trafik tescil kuruluşuna başvurun
+    aciklama: >-
+      Başvuru, varislerin yerleşim yeri adresinin bulunduğu trafik tescil kuruluşuna yapılır.
+      Tüm varisler başvurabileceği gibi, vekâlet vermeleri hâlinde vekilleri de başvurabilir.
+      Araç mevcut plakası üzerinden veya varislerin yerleşim yerindeki tescil kuruluşunun
+      plakasıyla tescil edilebilir. Şoförler odasından iki adet araç trafik tescil ve müracaat
+      işlem formu (EK-1) alınır.
+    gerekli_evraklar:
+      - Veraset ilamı veya mirasçılık belgesi
+      - Varislerin nüfus cüzdanı aslı
+      - Vergi dairesinden alınan veraset intikali yönünden borcu olmadığına dair belge
+      - Vergi borcu bulunmadığına dair ilişik kesme belgesi
+      - Zorunlu mali sorumluluk sigorta poliçesi (varis/varisler adına)
+      - Araç tescil ve motorlu araç trafik belgeleri
+      - Şoförler odasından alınan iki adet araç trafik tescil ve müracaat işlem formu (EK-1)
+    kurum: Varislerin yerleşim yerindeki trafik tescil kuruluşu
+    dayanaklar:
+      - kaynak: *egm
+        alinti: >-
+          1- Veraset ilamı veya mirasçılık belgesinin, 2- Nüfus cüzdanı aslının (varislerin), 3-
+          Vergi dairesinden alınan veraset intikali yönünden borcu olmadığına dair belgenin, 4-
+          Vergi borcunun bulunmadığına dair vergi dairesinden alınan ilişik kesme belgesinin, 5-
+          Zorunlu mali sorumluluk sigorta poliçesinin (varis/varisler adına), 6- Araç tescil ve
+          motorlu araç trafik belgelerinin, 7- Araç özelliklerine ve sahibinin/sahiplerinin
+          kimlik bilgilerine göre doldurulmuş şoförler odasından alınan iki adet araç trafik
+          tescil ve müracaat işlem formunun (EK-1) Varisler tarafından yerleşim yeri adresinin
+          bulunduğu trafik tescil kuruluşuna ibraz edilmesi gerekmektedir.
+      - kaynak: *egm
+        alinti: >-
+          Trafik tescil kuruluşuna tüm varisler müracaat edebileceği gibi, vekalet vermeleri
+          halinde vekilleri de müracaat edebilirler.
+      - kaynak: *egm
+        alinti: >-
+          varislerin yerleşim yerinin bulunduğu trafik tescil kuruluşunda mevcut plakası üzerinden
+          araç tescil edilebileceği gibi, yerleşim yerinin bulunduğu trafik tescil kuruluşunun
+          plakasına da tescil edilebilmesi mümkündür.
+
+uyarilar:
+  - metin: >-
+      Mirasçılar, vefat tarihinden itibaren 90 gün içinde tescil kuruluşuna başvurup adlarına
+      tescil belgesi almak zorundadır. Bu süre sonunda mirasçılar adına tescil edilmeden
+      karayoluna çıkarılan araç için sürücüye 3 bin lira idari para cezası verilir ve araç,
+      tescil ettirilinceye kadar trafikten men edilir.
+    dayanaklar:
+      - kaynak: &trafik https://www.trafik.gov.tr/trafik-guvenliginin-artirilmasina-yonelik-kanuni-duzenleme-tbmm-genel-kurulunda-kabul-edilerek-resmi-gazetede-yayimlandi
+        alinti: >-
+          Araç sahiplerinin vefat etmesi halinde mirasçılar, gerekli bilgi ve belgeleri
+          sağlayarak vefat tarihinden itibaren 90 gün içinde ilgili tescil kuruluşuna müracaat
+          etmek ve adlarına tescil belgesi almak zorunda olacak.
+      - kaynak: *trafik
+        alinti: >-
+          Bu araçların süresi sonunda mirasçılar adına tescil edilmeden kara yoluna çıkarıldığının
+          tespiti halinde sürücüye 3 bin lira idari para cezası verilecek ve mirasçılar adına
+          tescil ettirilinceye kadar araç trafikten menedilecek.
+
+  - goster_eger:
+      tescil_tercihi: [Henüz karar verilmedi]
+    metin: >-
+      Araç tüm varisler adına tescil ettirilebilir. Mirasçılardan yalnızca biri adına tescil için
+      noterde miras taksim sözleşmesi veya feragatname düzenlenir. Karar verdiğinizde rehberi
+      yeniden başlatabilirsiniz.
+    dayanaklar:
+      - kaynak: *egm
+        alinti: >-
+          Trafik tescil kuruluşuna tüm varisler müracaat edebileceği gibi, vekalet vermeleri
+          halinde vekilleri de müracaat edebilirler.
+      - kaynak: *egm
+        alinti: >-
+          noterden miras taksim sözleşmesi düzenlenmesi veya noterden düzenlenen feragatname ile
+          müracaat edilmesi halinde feragat edilen mirasçı adına araç tescil edilebilir.
+
+# Kaynakta karşılığı bulunmayan durumlar: bilgi verilmez, kuruma yönlendirilir.
+notlar:
+  - goster_eger:
+      tescil_tercihi: [Mirasçılar adına alınmadan satılacak]
+    metin: >-
+      Aracın mirasçılar adına tescil edilmeden satışına ilişkin usul, taranan resmi kaynaklarda
+      açıkça yer almıyor. Satıştan önce noterlik veya trafik tescil kuruluşu ile görüşünüz.
+      Yukarıdaki 90 günlük tescil süresi bu durumda da göz önünde bulundurulmalıdır.
+  - goster_eger:
+      kisitlama: [Var, Bilmiyorum]
+    metin: >-
+      Araç kaydındaki haciz, rehin gibi kısıtlamaların miras yoluyla tescile etkisi taranan resmi
+      kaynaklarda açıklanmıyor. Başvurudan önce trafik tescil kuruluşu ile görüşünüz.
