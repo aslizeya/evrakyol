@@ -48,7 +48,8 @@ RetrieverDep = Annotated[Retriever, Depends(get_retriever)]
 
 
 def _llm_unavailable(exc: LLMError) -> HTTPException:
-    logger.warning("LLM çağrısı başarısız: %s", exc.reason)
+    # Ayrıntı (ör. "API anahtarı geçersiz", "yetersiz bakiye") yalnızca sunucu kaydına yazılır.
+    logger.warning("LLM çağrısı başarısız: %s", exc)
     if exc.reason == "budget_exceeded":
         detail = "Günlük kullanım sınırına ulaşıldı. Lütfen daha sonra tekrar deneyin."
     else:

@@ -13,6 +13,7 @@ import html
 import json
 import logging
 import re
+import unicodedata
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 from typing import Literal
@@ -74,18 +75,38 @@ class RoadmapOutcome:
 
 # --- alıntı doğrulama ---
 
-_QUOTES = str.maketrans({"’": "'", "‘": "'", "“": '"', "”": '"', "–": "-", "—": "-", " ": " "})
+_QUOTES = str.maketrans({"’": "'", "‘": "'", "“": '"', "”": '"', "–": "-", "—": "-", "\u00a0": " "})
+# Yazım farkı sayılmayan karakterler: şapkalı harfler (dâhil/dahil), görünmez karakterler ve madde
+# işaretleri. Model alıntıda bunları sık sık sadeleştirir; anlam değişmediği için eşdeğer sayılır.
+_FOLD = str.maketrans(
+    {
+        "â": "a",
+        "î": "i",
+        "û": "u",
+        "\u00ad": None,  # yumuşak tire
+        "\u200b": None,  # sıfır genişlikli boşluk
+        "\u200c": None,
+        "\u200d": None,
+        "\ufeff": None,
+        "•": " ",
+        "·": " ",
+        "▪": " ",
+        "◦": " ",
+    }
+)
+_ELLIPSIS = re.compile(r"[(\[]?\s*(?:\.\.\.|…)\s*[)\]]?")
 
 
 def _normalize(text: str) -> str:
-    text = turkish_lower(html.unescape(text).translate(_QUOTES))
+    text = unicodedata.normalize("NFKC", html.unescape(text)).translate(_QUOTES)
+    text = turkish_lower(text).translate(_FOLD)
     return re.sub(r"\s+", " ", text).strip()
 
 
 def quote_found(quote: str, chunk: RetrievedChunk) -> bool:
     """Alıntı (üç nokta ile bölünmüş parçalar dahil) parçanın metninde birebir geçiyor mu?"""
     haystack = _normalize(f"{chunk.heading_path or ''} {chunk.content}")
-    parts = [p.strip(" .,;:\"'") for p in re.split(r"\.\.\.|…", _normalize(quote))]
+    parts = [p.strip(" .,;:\"'") for p in _ELLIPSIS.split(_normalize(quote))]
     parts = [p for p in parts if p]
     if not parts or sum(len(p) for p in parts) < MIN_QUOTE_CHARS:
         return False
@@ -104,8 +125,13 @@ def _verified_chunks(
     verified: list[RetrievedChunk] = []
     for item in evidence:
         chunk = by_id.get(item.kaynak.strip().upper())
-        if chunk and quote_found(item.alinti, chunk) and chunk not in verified:
-            verified.append(chunk)
+        if chunk and quote_found(item.alinti, chunk):
+            if chunk not in verified:
+                verified.append(chunk)
+        elif any(quote_found(item.alinti, other) for other in by_id.values()):
+            # Alıntı doğru ama başka bir kaynağa atfedilmiş. Kural gereği kabul edilmez; sıklığı
+            # izlenerek istem (prompt) iyileştirilir.
+            logger.info("Alıntı belirtilenden farklı bir kaynakta bulundu (%s)", item.kaynak)
     return verified
 
 

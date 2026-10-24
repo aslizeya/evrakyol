@@ -30,7 +30,7 @@ def build(responses: list, chunks=CHUNKS, answers=None, text="Babamdan kalan ara
         ("Noterden Mirasçılık Belgesi Nasıl Alınır", True),  # başlık yolu da aranır
     ],
 )
-def test_quote_verification(quote: str, expected: bool) -> None:
+def test_quote_verification_original(quote: str, expected: bool) -> None:
     assert quote_found(quote, TNB) is expected
 
 
@@ -46,6 +46,40 @@ def test_quote_verification(quote: str, expected: bool) -> None:
 )
 def test_fee_verification(fee: str, expected: bool) -> None:
     assert fee_supported(fee, [EGM]) is expected
+
+
+def _chunk(content: str):
+    from dataclasses import replace
+
+    return replace(TNB, heading_path="", content=content)
+
+
+@pytest.mark.parametrize(
+    ("content", "quote", "expected"),
+    [
+        # Şapkalı harfler sadeleştirilse de aynı ifadedir
+        ("çocuklar dâhil olmak üzere tüm mirasçılar", "çocuklar dahil olmak üzere", True),
+        # Madde işaretleri alıntıda yer almasa da olur
+        ("belgeler:\n• Kimlik kartı\n• Ölüm belgesi", "belgeler: Kimlik kartı Ölüm belgesi", True),
+        # Görünmez karakterler ve bölünmez boşluk
+        ("mirasçılık\u00a0belgesi nü\u00adfus müdürlüğünden", "mirasçılık belgesi nüfus", True),
+        # Parantezli ve köşeli üç nokta
+        (
+            "Aşağıdaki belgeler hazırlanır ve üç gün içinde teslim edilir",
+            "Aşağıdaki belgeler (...) üç gün içinde",
+            True,
+        ),
+        (
+            "Aşağıdaki belgeler hazırlanır ve üç gün içinde teslim edilir",
+            "Aşağıdaki belgeler […] üç gün içinde",
+            True,
+        ),
+        # Sadeleştirme anlamı değiştiren farkları kabul etmez
+        ("başvuru ücretsizdir", "başvuru ücretlidir", False),
+    ],
+)
+def test_quote_verification_tolerates_harmless_differences(content, quote, expected) -> None:
+    assert quote_found(quote, _chunk(content)) is expected
 
 
 # --- yol haritası ---

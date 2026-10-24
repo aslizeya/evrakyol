@@ -7,6 +7,7 @@ from typing import Literal
 
 from pydantic import ValidationError
 
+from app.config import get_settings
 from app.llm import LLMProvider
 from app.privacy import mask_pii
 from app.process_types import ProcessType, Slot
@@ -78,7 +79,9 @@ def understand(
             system=UNDERSTANDING_SYSTEM,
             user=user + (retry_note(error) if attempt else ""),
             schema=schema,
-            max_tokens=4000,
+            # Düşünme `max_tokens`'a dahildir; kısa yanıt için bile pay bırakılır.
+            max_tokens=16000,
+            effort=get_settings().llm_understanding_effort,
         )
         try:
             parsed = LlmUnderstanding.model_validate(json.loads(response.text))

@@ -12,7 +12,7 @@ from datetime import UTC, datetime
 from app.ingest.chunker import chunk_document
 from app.ingest.extract import ExtractionError, extract
 from app.ingest.fetcher import FetchError, PoliteFetcher
-from app.ingest.sources_config import get_sources_config
+from app.ingest.sources_config import SourceSeed, get_sources_config
 from app.rag.retrieval import RetrievedChunk
 from app.text import turkish_lower
 
@@ -28,7 +28,16 @@ class InMemoryRetriever:
         self.config = get_sources_config()
         self.fetcher = PoliteFetcher(self.config, max_retries=0, timeout=30)
         self._cache: dict[str, list[RetrievedChunk]] = {}
+        # Aynı kaynak birden çok işlemde kullanılır; adres başına bir kez indirilir.
+        self._by_url: dict[str, list[RetrievedChunk]] = {}
         self._lock = threading.Lock()
+
+    def warm_up(self) -> None:
+        """Tüm kaynakları önceden çeker; ilk kullanıcı sorusu indirmeyi beklemez."""
+        codes = sorted({code for seed in self.config.sources for code in seed.process_codes})
+        for code in codes:
+            self._chunks_for(code)
+        print(f"Kaynaklar hazır: {len(self._by_url)} kaynak", file=sys.stderr)
 
     def search(self, query: str, process_code: str, limit: int = 10) -> list[RetrievedChunk]:
         chunks = self._chunks_for(process_code)
@@ -53,30 +62,36 @@ class InMemoryRetriever:
         for i, seed in enumerate(self.config.sources, start=1):
             if process_code not in seed.process_codes:
                 continue
-            try:
-                fetched = self.fetcher.fetch(seed.url)
-                document = extract(
-                    fetched.content,
-                    fetched.content_type,
-                    legislation=seed.options.legislation,
-                    articles=seed.options.articles,
-                    charset=fetched.charset,
-                )
-            except (FetchError, ExtractionError) as exc:
-                print(f"  (atlandı: {seed.title} — {exc})", file=sys.stderr)
-                continue
-            for draft in chunk_document(document):
-                chunks.append(
-                    RetrievedChunk(
-                        chunk_id=i * 10_000 + draft.ordinal,
-                        source_id=i,
-                        source_title=seed.title or seed.url,
-                        url=seed.url,
-                        institution=seed.institution,
-                        heading_path=draft.heading_path,
-                        content=draft.content,
-                        last_fetched_at=datetime.now(UTC),
-                        score=0.0,
-                    )
-                )
+            if seed.url not in self._by_url:
+                self._by_url[seed.url] = self._fetch_source(i, seed)
+            chunks.extend(self._by_url[seed.url])
         return chunks
+
+    def _fetch_source(self, i: int, seed: SourceSeed) -> list[RetrievedChunk]:
+        try:
+            fetched = self.fetcher.fetch(seed.url)
+            document = extract(
+                fetched.content,
+                fetched.content_type,
+                legislation=seed.options.legislation,
+                articles=seed.options.articles,
+                charset=fetched.charset,
+            )
+        except (FetchError, ExtractionError) as exc:
+            print(f"  (atlandı: {seed.title} — {exc})", file=sys.stderr)
+            return []
+        fetched_at = datetime.now(UTC)
+        return [
+            RetrievedChunk(
+                chunk_id=i * 10_000 + draft.ordinal,
+                source_id=i,
+                source_title=seed.title or seed.url,
+                url=seed.url,
+                institution=seed.institution,
+                heading_path=draft.heading_path,
+                content=draft.content,
+                last_fetched_at=fetched_at,
+                score=0.0,
+            )
+            for draft in chunk_document(document)
+        ]

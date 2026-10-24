@@ -29,7 +29,7 @@ class LLMResponse:
 
 class LLMError(Exception):
     """LLM çağrısı başarısız. `reason`: refusal, max_tokens, rate_limited, unavailable,
-    api_error, budget_exceeded, not_configured, empty."""
+    auth, billing, bad_request, api_error, budget_exceeded, not_configured, empty."""
 
     def __init__(self, reason: str, detail: str = ""):
         super().__init__(f"{reason}: {detail}" if detail else reason)
@@ -38,9 +38,16 @@ class LLMError(Exception):
 
 class LLMProvider(Protocol):
     def generate_json(
-        self, *, system: str, user: str, schema: dict[str, object], max_tokens: int = 16000
+        self,
+        *,
+        system: str,
+        user: str,
+        schema: dict[str, object],
+        max_tokens: int = 32000,
+        effort: str | None = None,
     ) -> LLMResponse:
-        """`schema`'ya uyan tek bir JSON nesnesini metin olarak döndürür."""
+        """`schema`'ya uyan tek bir JSON nesnesini metin olarak döndürür. `effort` verilmezse
+        sağlayıcının varsayılanı kullanılır."""
         ...
 
 
@@ -59,13 +66,24 @@ class AnthropicProvider:
     ):
         if client is None and not api_key:
             raise LLMError("not_configured", "ANTHROPIC_API_KEY tanımlı değil")
-        self.client = client or anthropic.Anthropic(api_key=api_key, max_retries=2, timeout=120)
+        # Akış (streaming) kullanıldığı için zaman aşımı, toplam süre değil iki veri parçası
+        # arasındaki bekleme süresidir. Tekrar sayısı düşük tutulur: web katmanı en fazla
+        # ~150 sn bekler, daha uzun süren tekrarlar kullanıcıya ulaşmadan ücretlendirilir.
+        self.client = client or anthropic.Anthropic(
+            api_key=api_key, max_retries=1, timeout=anthropic.Timeout(90, connect=10)
+        )
         self.model = model
         self.effort = effort
         self.use_fallbacks = use_fallbacks and not model.startswith(self._NO_FALLBACK_PREFIXES)
 
     def generate_json(
-        self, *, system: str, user: str, schema: dict[str, object], max_tokens: int = 16000
+        self,
+        *,
+        system: str,
+        user: str,
+        schema: dict[str, object],
+        max_tokens: int = 32000,
+        effort: str | None = None,
     ) -> LLMResponse:
         extra: dict[str, object] = {}
         if self.use_fallbacks:
@@ -73,22 +91,34 @@ class AnthropicProvider:
             # sunucu tarafında yeniden çalıştırılır.
             extra = {"betas": ["server-side-fallback-2026-07-01"], "fallbacks": "default"}
         try:
-            response = self.client.beta.messages.create(
+            # Düşünme bu modelde her zaman açıktır ve `max_tokens`'a dahildir; sınır bu yüzden
+            # yanıtın kendisinden çok daha geniş tutulur. Uzun isteklerde bağlantının boşta
+            # kalıp kopmaması için akış kullanılır.
+            with self.client.beta.messages.stream(
                 model=self.model,
                 max_tokens=max_tokens,
                 # Sabit sistem talimatı önbelleklenir; değişken kaynaklar kullanıcı mesajındadır.
                 system=[{"type": "text", "text": system, "cache_control": {"type": "ephemeral"}}],
                 messages=[{"role": "user", "content": user}],
                 output_config={
-                    "effort": self.effort,
+                    "effort": effort or self.effort,
                     "format": {"type": "json_schema", "schema": schema},
                 },
                 **extra,
-            )
+            ) as stream:
+                response = stream.get_final_message()
         except anthropic.RateLimitError as exc:
             raise LLMError("rate_limited") from exc
+        except (anthropic.AuthenticationError, anthropic.PermissionDeniedError) as exc:
+            raise LLMError(
+                "auth", f"HTTP {exc.status_code}: API anahtarı geçersiz veya yetkisiz"
+            ) from exc
+        except anthropic.BadRequestError as exc:
+            # Örn. yetersiz bakiye veya geçersiz istek; ayrıntı yalnızca sunucu kaydına yazılır.
+            reason = "billing" if "credit balance" in str(exc.message).lower() else "bad_request"
+            raise LLMError(reason, f"HTTP 400: {exc.message}") from exc
         except anthropic.APIStatusError as exc:
-            raise LLMError("api_error", f"HTTP {exc.status_code}") from exc
+            raise LLMError("api_error", f"HTTP {exc.status_code}: {exc.message}") from exc
         except anthropic.APIConnectionError as exc:
             raise LLMError("unavailable", type(exc).__name__) from exc
 

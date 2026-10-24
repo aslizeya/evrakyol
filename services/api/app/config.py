@@ -32,10 +32,12 @@ class Settings(BaseSettings):
     # LLM (sağlayıcıdan bağımsız katman, app/llm.py)
     llm_provider: Literal["anthropic"] = "anthropic"
     llm_model: str = "claude-opus-5-5"
+    # Yol haritası üretimi için; sınıflandırma basit bir iş olduğundan daha düşük düzeyde çalışır
     llm_effort: Literal["low", "medium", "high", "xhigh", "max"] = "high"
+    llm_understanding_effort: Literal["low", "medium", "high", "xhigh", "max"] = "low"
     # Güvenlik sınıflandırıcısı reddederse sunucu tarafında önerilen yedek modelle yeniden dene
     llm_fallbacks: bool = True
-    llm_daily_request_limit: int = 2000
+    llm_daily_request_limit: int = 100
     anthropic_api_key: str | None = None
     # Uydurma yargıcı: test edilen modelden farklı olmalı (kendi çıktısını kayırmasın)
     eval_judge_model: str = "claude-sonnet-5-5"

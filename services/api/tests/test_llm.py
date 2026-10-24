@@ -1,6 +1,8 @@
 from types import SimpleNamespace
 from unittest.mock import MagicMock
 
+import anthropic
+import httpx
 import pytest
 
 from app.llm import AnthropicProvider, DailyLimitedProvider, FakeProvider, LLMError
@@ -23,7 +25,8 @@ def fake_response(stop_reason: str = "end_turn", text: str = '{"ok": true}', cat
 
 def provider(model: str = "claude-opus-5-5", **kwargs) -> tuple[AnthropicProvider, MagicMock]:
     client = MagicMock()
-    client.beta.messages.create.return_value = kwargs.pop("response", fake_response())
+    stream = client.beta.messages.stream.return_value.__enter__.return_value
+    stream.get_final_message.return_value = kwargs.pop("response", fake_response())
     return AnthropicProvider(api_key=None, model=model, client=client, **kwargs), client
 
 
@@ -31,7 +34,7 @@ def test_request_uses_structured_output_caching_and_fallbacks() -> None:
     p, client = provider(effort="high")
     result = p.generate_json(system="SİSTEM", user="KULLANICI", schema=SCHEMA)
 
-    kwargs = client.beta.messages.create.call_args.kwargs
+    kwargs = client.beta.messages.stream.call_args.kwargs
     assert kwargs["model"] == "claude-opus-5-5"
     assert kwargs["output_config"] == {
         "effort": "high",
@@ -51,7 +54,7 @@ def test_request_uses_structured_output_caching_and_fallbacks() -> None:
 def test_haiku_and_disabled_fallbacks_send_no_fallback_parameter() -> None:
     for p, client in (provider("claude-haiku-5-5"), provider(use_fallbacks=False)):
         p.generate_json(system="s", user="u", schema=SCHEMA)
-        kwargs = client.beta.messages.create.call_args.kwargs
+        kwargs = client.beta.messages.stream.call_args.kwargs
         assert "fallbacks" not in kwargs and "betas" not in kwargs
 
 
@@ -83,3 +86,40 @@ def test_daily_limit() -> None:
     with pytest.raises(LLMError) as exc_info:
         limited.generate_json(system="s", user="u", schema=SCHEMA)
     assert exc_info.value.reason == "budget_exceeded"
+
+
+def test_effort_can_be_overridden_per_call() -> None:
+    p, client = provider(effort="high")
+    p.generate_json(system="s", user="u", schema=SCHEMA, effort="low")
+    assert client.beta.messages.stream.call_args.kwargs["output_config"]["effort"] == "low"
+
+
+def _status_error(cls, status: int, message: str):
+    request = httpx.Request("POST", "https://api.anthropic.com/v1/messages")
+    response = httpx.Response(status, request=request)
+    return cls(message, response=response, body=None)
+
+
+@pytest.mark.parametrize(
+    ("error", "reason"),
+    [
+        (_status_error(anthropic.AuthenticationError, 401, "invalid x-api-key"), "auth"),
+        (
+            _status_error(
+                anthropic.BadRequestError, 400, "Your credit balance is too low to access the API."
+            ),
+            "billing",
+        ),
+        (
+            _status_error(anthropic.BadRequestError, 400, "output_config: invalid schema"),
+            "bad_request",
+        ),
+        (_status_error(anthropic.InternalServerError, 529, "Overloaded"), "api_error"),
+    ],
+)
+def test_api_errors_map_to_actionable_reasons(error, reason: str) -> None:
+    p, client = provider()
+    client.beta.messages.stream.side_effect = error
+    with pytest.raises(LLMError) as exc_info:
+        p.generate_json(system="s", user="u", schema=SCHEMA)
+    assert exc_info.value.reason == reason

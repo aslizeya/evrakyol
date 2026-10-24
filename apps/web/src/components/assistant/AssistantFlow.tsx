@@ -140,7 +140,7 @@ export function AssistantFlow() {
       {stage.kind === "understanding" ? <Loading text="İsteğiniz anlaşılıyor…" /> : null}
 
       {stage.kind === "building" ? (
-        <Loading text="Resmi kaynaklar taranıyor ve yol haritanız hazırlanıyor. Bu işlem yarım dakika kadar sürebilir." />
+        <Loading text="Resmi kaynaklar taranıyor ve yol haritanız hazırlanıyor. Bu işlem 1-2 dakika sürebilir." />
       ) : null}
 
       {stage.kind === "clarify" ? (

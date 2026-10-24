@@ -8,8 +8,9 @@ export const POST = proxyRoute({
   responseSchema: roadmapResponseSchema,
   // Yol haritası üretimi pahalıdır; kullanıcı başına daha sıkı sınır.
   limit: { requests: 10, windowSeconds: 600 },
-  timeoutMs: 150_000,
+  // Model yanıt vermeden önce düşünür; tek denemede 1-2 dakika sürebilir.
+  timeoutMs: 240_000,
 });
 
 // Yol haritası üretimi uzun sürebilir (kaynak arama + LLM); barındırma ortamının süre sınırı.
-export const maxDuration = 160;
+export const maxDuration = 250;
