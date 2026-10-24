@@ -39,14 +39,13 @@ export function AssistantFlow() {
   const [text, setText] = useState("");
   const [masked, setMasked] = useState(false);
   const headingRef = useRef<HTMLHeadingElement>(null);
-  const firstRender = useRef(true);
+  const previousKind = useRef<Stage["kind"]>("ask");
 
   // Aşama değiştiğinde odak yeni bölümün başlığına taşınır (ekran okuyucu ve klavye kullanıcıları için).
+  // İlk açılışta odak taşınmaz; karşılaştırma, efektin geliştirme modunda iki kez çalışmasına da dayanıklıdır.
   useEffect(() => {
-    if (firstRender.current) {
-      firstRender.current = false;
-      return;
-    }
+    if (previousKind.current === stage.kind) return;
+    previousKind.current = stage.kind;
     headingRef.current?.focus();
   }, [stage.kind]);
 

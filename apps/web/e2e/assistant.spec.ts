@@ -28,7 +28,7 @@ test("soru -> netleştirme -> yol haritası akışı; her aşama erişilebilir",
   await page.getByRole("radio", { name: "Hayır" }).check();
   await page.getByRole("button", { name: "Devam et" }).click();
 
-  await expect(page.getByRole("heading", { name: "Yol haritanız" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Yol haritanız", exact: true })).toBeVisible();
   await expect(
     page.getByRole("heading", { level: 3, name: /Noterden mirasçılık belgesi alın/ }),
   ).toBeVisible();
@@ -74,7 +74,7 @@ test("yol haritası yatay kaydırma olmadan sığar ve yazdırmada düğmeler gi
   await ask(page, QUESTION);
   await page.getByRole("radio", { name: "Hayır" }).check();
   await page.getByRole("button", { name: "Devam et" }).click();
-  await expect(page.getByRole("heading", { name: "Yol haritanız" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Yol haritanız", exact: true })).toBeVisible();
 
   const overflow = await page.evaluate(
     () => document.documentElement.scrollWidth - document.documentElement.clientWidth,

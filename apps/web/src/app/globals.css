@@ -16,6 +16,10 @@
   --danger-bg: #fdecec;
   --danger-fg: #8a1c1c;
   --success: #1d6b34;
+  --accent-soft: #e3f1ef;
+  --accent-soft-fg: #0a4f49;
+  --hero-glow: #cfe8e4;
+  --shadow: 0 1px 2px rgb(16 24 40 / 0.05), 0 8px 24px -8px rgb(16 24 40 / 0.12);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -33,6 +37,10 @@
     --danger-bg: #2d1414;
     --danger-fg: #f3a7a7;
     --success: #7ed49a;
+    --accent-soft: #10302d;
+    --accent-soft-fg: #9fe0d7;
+    --hero-glow: #0f2e2b;
+    --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px -8px rgb(0 0 0 / 0.6);
   }
 }
 
@@ -50,6 +58,9 @@
   --color-danger-bg: var(--danger-bg);
   --color-danger-fg: var(--danger-fg);
   --color-success: var(--success);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-soft-fg: var(--accent-soft-fg);
+  --shadow-card: var(--shadow);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -60,7 +71,8 @@ body {
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
 
-:focus-visible {
+/* Programla odaklanan başlıklarda (tabindex="-1") çerçeve gösterilmez. */
+:focus-visible:not([tabindex="-1"]) {
   outline: 3px solid var(--accent);
   outline-offset: 2px;
 }
