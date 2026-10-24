@@ -9,13 +9,21 @@ from app.config import get_settings
 
 @lru_cache
 def get_engine() -> Engine:
-    return create_engine(get_settings().database_url, pool_pre_ping=True)
+    url = get_settings().database_url
+    if not url:
+        raise RuntimeError("DATABASE_URL tanımlı değil")
+    return create_engine(url, pool_pre_ping=True)
 
 
 def get_session() -> Iterator[Session]:
     """FastAPI bağımlılığı: istek başına bir veritabanı oturumu."""
-    session = sessionmaker(bind=get_engine(), expire_on_commit=False)()
+    session = get_sessionmaker()()
     try:
         yield session
     finally:
         session.close()
+
+
+@lru_cache
+def get_sessionmaker() -> sessionmaker[Session]:
+    return sessionmaker(bind=get_engine(), expire_on_commit=False)

@@ -8,15 +8,21 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-RUN useradd --create-home --uid 1000 evrakyol
+# Model önbelleği (Hugging Face) kalıcı volume'a bağlanır; klasör kullanıcıya ait olmalı.
+RUN useradd --create-home --uid 1000 evrakyol \
+    && mkdir -p /home/evrakyol/.cache \
+    && chown evrakyol:evrakyol /home/evrakyol/.cache
+
+# Embedding modeli CPU'da çalışır: PyTorch'un küçük CPU sürümü önce kurulur.
+RUN pip install torch --index-url https://download.pytorch.org/whl/cpu
 
 COPY services/api/pyproject.toml ./
 COPY services/api/app ./app
-RUN pip install .
+RUN pip install ".[embeddings]"
 
 COPY services/api/alembic.ini ./
 COPY services/api/alembic ./alembic
-# Ortak yapılandırma (işlem türleri, izin listesi)
+# Ortak yapılandırma (işlem türleri, kaynak izin listesi)
 COPY config /config
 ENV CONFIG_DIR=/config
 

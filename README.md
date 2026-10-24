@@ -8,13 +8,13 @@ Resmi işlemler için yalnızca resmi kaynaklara dayanan, her adımın kaynağı
 
 ## Depo yapısı
 
-| Klasör          | İçerik                                                             |
-| --------------- | ------------------------------------------------------------------ |
-| `apps/web`      | Next.js web uygulaması (arayüz, kimlik doğrulama, kayıtlı işlemler) |
-| `services/api`  | FastAPI yapay zekâ servisi (veri toplama, indeksleme, RAG)          |
-| `config`        | Ortak yapılandırma (işlem türleri, kaynak izin listesi)            |
-| `eval`          | Değerlendirme seti ve raporları                                     |
-| `docs`          | Karar kaydı ve teknik notlar                                       |
+| Klasör         | İçerik                                                              |
+| -------------- | ------------------------------------------------------------------- |
+| `apps/web`     | Next.js web uygulaması (arayüz, kimlik doğrulama, kayıtlı işlemler) |
+| `services/api` | FastAPI yapay zekâ servisi (veri toplama, indeksleme, RAG)          |
+| `config`       | Ortak yapılandırma (işlem türleri, kaynak izin listesi)             |
+| `eval`         | Değerlendirme seti ve raporları                                     |
+| `docs`         | Karar kaydı ve teknik notlar                                        |
 
 ## Yerel kurulum
 
@@ -38,6 +38,21 @@ npm run dev
 ```
 
 Web: http://localhost:3000
+
+## Veri toplama ve indeksleme
+
+Kaynaklar ve izin verilen alan adları [config/sources.yaml](config/sources.yaml) dosyasında tutulur. Hat şu adımlardan oluşur: izin listesi kontrolü → robots.txt → sunucu başına en az 3 saniye arayla çekme → başlık yapısı korunarak ayıklama (HTML/PDF, mevzuatta madde bazında) → parçalama → `bge-m3` ile embedding → `kb` şemasına yazma.
+
+```bash
+docker compose exec api python -m app.ingest sync     # yapılandırmadaki kaynakları veritabanına aktar
+docker compose exec api python -m app.ingest run      # tüm aktif kaynakları çek ve indeksle
+docker compose exec api python -m app.ingest status   # kaynakların son durumu
+```
+
+- `run` periyodik güncelleme için günlük zamanlanmış görev olarak çalıştırılır. İçeriği (özet hash'i) değişmeyen kaynaklar yeniden işlenmez; değişenler yeniden indekslenir ve değişiklik oranı `kb.ingestion_logs` tablosuna yazılır.
+- Çekme başarısız olursa kaynağın mevcut parçaları silinmez.
+- Giriş ekranı gösteren sayfalar (ör. e-Devlet hizmet sayfaları) ve çok kısa içerikler kaynak olarak kabul edilmez.
+- Veritabanına yazmadan bir adresin nasıl ayıklanacağını görmek için: `python -m app.ingest preview <URL>`
 
 ## Testler
 

@@ -20,7 +20,7 @@ from sqlalchemy import (
     func,
     text,
 )
-from sqlalchemy.dialects.postgresql import ARRAY, TSVECTOR
+from sqlalchemy.dialects.postgresql import ARRAY, JSONB, TSVECTOR
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 KB_SCHEMA = "kb"
@@ -45,6 +45,8 @@ class Source(Base):
     content_hash: Mapped[str | None] = mapped_column(String(64))
     # Bu kaynağın ilgili olduğu işlem kodları (config/process_types.json)
     process_codes: Mapped[list[str]] = mapped_column(ARRAY(String(64)), server_default=text("'{}'"))
+    # Ayıklama seçenekleri (app.ingest.sources_config.SourceOptions), ör. {"legislation": true}
+    options: Mapped[dict] = mapped_column(JSONB, server_default=text("'{}'::jsonb"))
     active: Mapped[bool] = mapped_column(server_default=text("true"))
     last_fetched_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     last_changed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
@@ -113,4 +115,7 @@ class IngestionLog(Base):
     started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
-    __table_args__ = (Index("ix_ingestion_logs_started_at", "started_at"),)
+    __table_args__ = (
+        Index("ix_ingestion_logs_started_at", "started_at"),
+        Index("ix_ingestion_logs_source_started", "source_id", "started_at"),
+    )

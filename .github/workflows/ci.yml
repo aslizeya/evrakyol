@@ -97,6 +97,12 @@ jobs:
         run: |
           pip install -e .
           alembic upgrade head
+      - name: Kaynak yapılandırması veritabanına aktarılabiliyor mu?
+        working-directory: services/api
+        run: |
+          python -m app.ingest sync
+          python -m app.ingest sync
+          python -m app.ingest status
       - name: app şeması (Prisma) ve başlangıç verisi
         working-directory: apps/web
         run: |

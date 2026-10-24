@@ -1,0 +1,100 @@
+# Evrakyol kaynak yapılandırması
+#
+# allowed_domains: Veri yalnızca bu alan adlarından (ve alt alan adlarından) toplanır.
+#   Listede olmayan bir adrese, yönlendirme yoluyla bile olsa, istek atılmaz.
+# sources: Başlangıç kaynakları. `python -m app.ingest sync` ile veritabanına aktarılır.
+#   Yönetici panelinden eklenen kaynaklar da aynı izin listesine tabidir.
+#
+# Kaynak seçenekleri (options):
+#   legislation: true   -> Metin "Madde N" başlıklarına göre bölünür (kanun/yönetmelik).
+#   articles: [...]     -> Sadece bu maddeler alınır. Örn. ["495-501", "598"].
+
+user_agent: "EvrakyolBot/0.1 (+https://github.com/aslizeya/evrakyol)"
+# Aynı sunucuya art arda iki istek arasındaki en kısa süre (saniye).
+# robots.txt daha uzun bir Crawl-delay belirtirse o kullanılır.
+min_delay_seconds: 3
+
+# Bu ifadeleri içeren sayfalar kaynak olarak kabul edilmez (giriş ekranları vb.)
+reject_patterns:
+  - "Henüz kimliğinizi doğrulamadınız"
+  - "kimlik doğrulama yöntemlerinden sizin için uygun olan"
+
+allowed_domains:
+  - domain: turkiye.gov.tr
+    institution: e-Devlet Kapısı
+  - domain: nvi.gov.tr
+    institution: Nüfus ve Vatandaşlık İşleri Genel Müdürlüğü
+  - domain: gib.gov.tr
+    institution: Gelir İdaresi Başkanlığı
+  - domain: btk.gov.tr
+    institution: Bilgi Teknolojileri ve İletişim Kurumu
+  - domain: mevzuat.gov.tr
+    institution: Mevzuat Bilgi Sistemi
+  - domain: resmigazete.gov.tr
+    institution: Resmî Gazete
+  - domain: egm.gov.tr
+    institution: Emniyet Genel Müdürlüğü
+  - domain: trafik.gov.tr
+    institution: Emniyet Genel Müdürlüğü Trafik Başkanlığı
+  - domain: adalet.gov.tr
+    institution: Adalet Bakanlığı
+  - domain: ticaret.gov.tr
+    institution: Ticaret Bakanlığı
+  # Kamu kurumu niteliğinde meslek kuruluşu (proje sahibi kararı, 2026-10-23)
+  - domain: tnb.org.tr
+    institution: Türkiye Noterler Birliği
+
+sources:
+  # --- Mirasçılık belgesi + miras yoluyla araç devri (ortak) ---
+  - url: https://portal.tnb.org.tr/Sayfalar/MirascilikHiz.aspx
+    institution: Türkiye Noterler Birliği
+    title: Mirasçılık Belgesi
+    process_codes: [mirascilik_belgesi, miras_arac_devri]
+
+  - url: https://cdn.gib.gov.tr/api/gibportal-file/file/getFile?objectKey=PAGE%2FUNIVERSAL%2F2026%2F2026_VerasetveIntikal_Vergisi_Brosuru.pdf
+    institution: Gelir İdaresi Başkanlığı
+    title: Veraset ve İntikal Vergisi Broşürü (2026)
+    process_codes: [mirascilik_belgesi, miras_arac_devri]
+
+  - url: https://www.mevzuat.gov.tr/MevzuatMetin/1.5.7338.pdf
+    institution: Mevzuat Bilgi Sistemi
+    title: 7338 sayılı Veraset ve İntikal Vergisi Kanunu
+    process_codes: [mirascilik_belgesi, miras_arac_devri]
+    options:
+      legislation: true
+
+  # --- Mirasçılık belgesi ---
+  - url: https://www.mevzuat.gov.tr/MevzuatMetin/1.5.4721.pdf
+    institution: Mevzuat Bilgi Sistemi
+    title: 4721 sayılı Türk Medeni Kanunu (yasal mirasçılar, mirasçılık belgesi)
+    process_codes: [mirascilik_belgesi]
+    options:
+      legislation: true
+      articles: ["495-501", "598"]
+
+  - url: https://www.mevzuat.gov.tr/MevzuatMetin/1.5.1512.pdf
+    institution: Mevzuat Bilgi Sistemi
+    title: 1512 sayılı Noterlik Kanunu (mirasçılık belgesi)
+    process_codes: [mirascilik_belgesi]
+    options:
+      legislation: true
+      articles: ["71"]
+
+  # --- Miras yoluyla araç devri ---
+  - url: https://www.egm.gov.tr/trafik-tescil-hakkinda
+    institution: Emniyet Genel Müdürlüğü
+    title: Trafik Tescil Hakkında
+    process_codes: [miras_arac_devri]
+
+  - url: https://www.trafik.gov.tr/trafik-guvenliginin-artirilmasina-yonelik-kanuni-duzenleme-tbmm-genel-kurulunda-kabul-edilerek-resmi-gazetede-yayimlandi
+    institution: Emniyet Genel Müdürlüğü Trafik Başkanlığı
+    title: Karayolları Trafik Kanunu değişikliği (27.02.2026)
+    process_codes: [miras_arac_devri]
+
+  - url: https://www.mevzuat.gov.tr/MevzuatMetin/1.5.2918.pdf
+    institution: Mevzuat Bilgi Sistemi
+    title: 2918 sayılı Karayolları Trafik Kanunu (tescil ve devir)
+    process_codes: [miras_arac_devri]
+    options:
+      legislation: true
+      articles: ["19-20"]

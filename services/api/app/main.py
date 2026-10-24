@@ -6,11 +6,13 @@ from pydantic import BaseModel
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
+from app.admin import router as admin_router
 from app.db import get_session
 
 logger = logging.getLogger(__name__)
 
 app = FastAPI(title="Evrakyol API", version="0.1.0")
+app.include_router(admin_router)
 
 
 class HealthResponse(BaseModel):
