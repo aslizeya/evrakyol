@@ -7,12 +7,14 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from app.admin import router as admin_router
+from app.api_v1 import router as v1_router
 from app.db import get_session
 
 logger = logging.getLogger(__name__)
 
 app = FastAPI(title="Evrakyol API", version="0.1.0")
 app.include_router(admin_router)
+app.include_router(v1_router)
 
 
 class HealthResponse(BaseModel):

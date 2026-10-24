@@ -39,10 +39,27 @@
 | 2026-10-24 | GİB'in vergi konuları sayfası yerine resmi broşür PDF'i kullanılıyor               | Sayfa içeriği tarayıcıda JavaScript ile yükleniyor; broşür aynı bilgiyi içeriyor ve tarihli (Eylül 2026).                                       |
 | 2026-10-24 | Büyük kanunlardan yalnızca ilgili maddeler alınıyor (ör. TMK 495–501, 598)         | Kanunun tamamı ilgisiz yüzlerce parça üretir ve aramayı zayıflatır. Maddeler `config/sources.yaml` içinden değiştirilebilir.                    |
 
+## Yanıt üretimi (3. aşama)
+
+| Tarih      | Karar                                                                                                                 | Gerekçe                                                                                                                                 |
+| ---------- | --------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-10-24 | Varsayılan model `claude-opus-5-5`, effort `high`; `LLM_MODEL=claude-sonnet-5-5` ile daha ucuz seçenek                | Hukuki/idari doğruluk maliyetten önce gelir. Değerlendirme (4. aşama) sonuçlarına göre yeniden bakılacak.                               |
+| 2026-10-24 | Sunucu tarafı yedek model (`fallbacks: "default"`) açık                                                               | Güvenlik sınıflandırıcısının yanlışlıkla reddettiği istekler kullanıcıya hata olarak dönmesin. `LLM_FALLBACKS=false` ile kapatılabilir. |
+| 2026-10-24 | LLM çıktısı JSON şemasıyla kısıtlanıyor (structured outputs)                                                          | Serbest metin yerine doğrulanabilir alanlar.                                                                                            |
+| 2026-10-24 | Her adım ve uyarı için kaynak kimliği + birebir alıntı zorunlu; sunucu alıntıyı kaynakta arar                         | "Kaynak gösterildi" ile "kaynağa dayanıyor" aynı şey değil. Doğrulanamayan adım/uyarı gösterilmez.                                      |
+| 2026-10-24 | Kaynak başlığı, adresi, kontrol tarihi veritabanından ekleniyor                                                       | LLM'in adres uydurma ihtimali tamamen ortadan kalkar.                                                                                   |
+| 2026-10-24 | Ücret, ancak içindeki her sayı dayanak kaynakta geçiyorsa gösteriliyor                                                | Ücretler en sık değişen ve en riskli bilgi.                                                                                             |
+| 2026-10-24 | Şemaya uymayan yanıt bir kez yeniden deneniyor; ikinci hatada kullanıcıya hata                                        | Proje belgesindeki "uydurma" yasağı.                                                                                                    |
+| 2026-10-24 | Hibrit arama: vektör + Türkçe tam metin (VEYA araması), Reciprocal Rank Fusion                                        | Doğal dildeki uzun sorular VE aramasıyla sonuç bulamıyor; iki yöntemin sıralamaları birleştirilince ikisinin de güçlü yanı kalıyor.     |
+| 2026-10-24 | Kişisel veriler (T.C. kimlik, plaka, telefon, e-posta, IBAN, adres) LLM'e gitmeden ve kaydedilmeden önce maskeleniyor | KVKK; yurt dışına veri aktarımı riskini azaltır. Maskelenmiş metin web'e döner, kaydedilen odur.                                        |
+| 2026-10-24 | Netleştirici sorular `config/process_types.json` içinde, seçenekli ve kişisel veri istemeyen sorular                  | Tutarlılık; cevaplar LLM'in serbest yorumuna bırakılmaz. **Soruların metni proje sahibinin onayını bekliyor.**                          |
+| 2026-10-24 | Günlük LLM çağrı tavanı süreç içinde tutuluyor                                                                        | MVP için yeterli; birden çok sunucu örneğinde Redis'e taşınmalı.                                                                        |
+
 ## Açık konular
 
 - **Araçların Satış, Devir ve Tescil Hizmetlerinin Yürütülmesi Hakkında Yönetmelik** henüz kaynak listesinde değil: Mevzuat Bilgi Sistemi'ndeki numarası güvenilir şekilde doğrulanamadı. Numara doğrulanınca `config/sources.yaml`'a eklenecek.
 - **mevzuat.gov.tr geliştirme bilgisayarından erişilemiyor** (bağlantı zaman aşımı; site başka ağlardan açılıyor). Mevzuat kaynakları yayın ortamından (Railway) ilk çalıştırmada doğrulanacak.
+- **Netleştirici soruların onayı:** Miras yoluyla araç devri (4 soru) ve mirasçılık belgesi (3 soru) için yazılan soru metinleri ve seçenekleri proje sahibinin onayını bekliyor.
 - **EGM "Trafik Tescil Hakkında" sayfasının güncelliği:** Sayfa trafik tescil kuruluşunu başvuru yeri olarak gösteriyor; 2018'den beri araç satış/devir işlemleri noterlikte de yapılıyor. Kaynaklar arası olası çelişkiler 3. aşamada yanıtta uyarı olarak gösterilecek.
 
 - **Giriş yapmamış kullanıcıların geri bildirimi:** Veri modelinde geri bildirim kayıtlı bir işleme (`user_processes`) bağlı. Giriş yapmadan yol haritası gören kullanıcıların da geri bildirim verebilmesi isteniyorsa 7. aşamada model genişletilmeli. Proje sahibinin kararı bekleniyor.

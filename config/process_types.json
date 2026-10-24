@@ -1,45 +1,103 @@
 {
-  "$comment": "MVP kapsamındaki işlem türleri. Web (Prisma seed) ve API (sınıflandırma) bu dosyayı ortak kaynak olarak kullanır.",
+  "$comment": "MVP kapsamındaki işlem türleri. Web (Prisma seed) ve API (sınıflandırma, netleştirici sorular) bu dosyayı ortak kaynak olarak kullanır. Sorular kişisel veri (T.C. kimlik no, plaka, adres) istemez. 'slots' sırası soru önceliğidir.",
   "process_types": [
     {
       "code": "miras_arac_devri",
       "name": "Miras yoluyla araç devri",
-      "description": "Vefat eden kişinin adına kayıtlı aracın mirasçılara veya bir mirasçıya devri."
+      "description": "Vefat eden kişinin adına kayıtlı aracın mirasçılara veya bir mirasçıya devri.",
+      "referral": "Noterlik veya aracın tescil edileceği yerdeki trafik tescil kuruluşu",
+      "slots": [
+        {
+          "key": "mirascilik_belgesi",
+          "question": "Mirasçılık belgesi (veraset ilamı) alındı mı?",
+          "options": ["Evet", "Hayır", "Bilmiyorum"]
+        },
+        {
+          "key": "tescil_tercihi",
+          "question": "Araç nasıl devredilecek?",
+          "options": [
+            "Tüm mirasçılar adına",
+            "Mirasçılardan biri adına",
+            "Mirasçılar adına alınmadan satılacak",
+            "Henüz karar verilmedi"
+          ]
+        },
+        {
+          "key": "mirasci_sayisi",
+          "question": "Kaç mirasçı var?",
+          "options": ["Tek mirasçı", "Birden fazla mirasçı", "Bilmiyorum"]
+        },
+        {
+          "key": "kisitlama",
+          "question": "Araç kaydında haciz veya rehin gibi bir kısıtlama var mı?",
+          "options": ["Var", "Yok", "Bilmiyorum"]
+        }
+      ]
     },
     {
       "code": "ikinci_el_arac_devri",
       "name": "İkinci el araç alım-satım devri",
-      "description": "İkinci el bir aracın satıcıdan alıcıya devri ve tescili."
+      "description": "İkinci el bir aracın satıcıdan alıcıya devri ve tescili.",
+      "referral": "Noterlik",
+      "slots": []
     },
     {
       "code": "pasaport",
       "name": "Pasaport başvurusu ve yenileme",
-      "description": "İlk kez pasaport başvurusu veya süresi dolan pasaportun yenilenmesi."
+      "description": "İlk kez pasaport başvurusu veya süresi dolan pasaportun yenilenmesi.",
+      "referral": "Nüfus ve Vatandaşlık İşleri il/ilçe müdürlüğü",
+      "slots": []
     },
     {
       "code": "imei_kayit",
       "name": "Yurt dışından getirilen telefonun IMEI kaydı",
-      "description": "Yurt dışından getirilen cep telefonunun IMEI numarasının kayıt altına alınması."
+      "description": "Yurt dışından getirilen cep telefonunun IMEI numarasının kayıt altına alınması.",
+      "referral": "Vergi dairesi ve mobil hat operatörü",
+      "slots": []
     },
     {
       "code": "yerlesim_yeri_belgesi",
       "name": "İkametgâh / yerleşim yeri belgesi",
-      "description": "Yerleşim yeri (ikametgâh) belgesinin alınması."
+      "description": "Yerleşim yeri (ikametgâh) belgesinin alınması.",
+      "referral": "Nüfus ve Vatandaşlık İşleri il/ilçe müdürlüğü",
+      "slots": []
     },
     {
       "code": "kimlik_karti_yenileme",
       "name": "Kimlik kartı yenileme",
-      "description": "Kimlik kartının yenilenmesi veya eski tip nüfus cüzdanının değiştirilmesi."
+      "description": "Kimlik kartının yenilenmesi veya eski tip nüfus cüzdanının değiştirilmesi.",
+      "referral": "Nüfus ve Vatandaşlık İşleri il/ilçe müdürlüğü",
+      "slots": []
     },
     {
       "code": "mirascilik_belgesi",
       "name": "Mirasçılık belgesi (veraset ilamı)",
-      "description": "Mirasçılık belgesinin noterden veya sulh hukuk mahkemesinden alınması."
+      "description": "Mirasçılık belgesinin noterden veya sulh hukuk mahkemesinden alınması.",
+      "referral": "Noterlik veya sulh hukuk mahkemesi",
+      "slots": [
+        {
+          "key": "vasiyetname",
+          "question": "Miras bırakanın bir vasiyetnamesi var mı?",
+          "options": ["Var", "Yok", "Bilmiyorum"]
+        },
+        {
+          "key": "ozel_durum",
+          "question": "Şu durumlardan biri geçerli mi: mirasçılardan biri evlatlık, gaip, birden çok vatandaşlığa sahip ya da miras bırakanla aynı gün vefat etmiş?",
+          "options": ["Evet", "Hayır", "Bilmiyorum"]
+        },
+        {
+          "key": "basvuru_yeri",
+          "question": "Belgeyi nereden almayı düşünüyorsunuz?",
+          "options": ["Noter", "Sulh hukuk mahkemesi", "Fark etmez"]
+        }
+      ]
     },
     {
       "code": "ehliyet_yenileme",
       "name": "Ehliyet yenileme / değişimi",
-      "description": "Sürücü belgesinin yenilenmesi veya eski tip belgenin yeni tip belgeyle değiştirilmesi."
+      "description": "Sürücü belgesinin yenilenmesi veya eski tip belgenin yeni tip belgeyle değiştirilmesi.",
+      "referral": "Nüfus ve Vatandaşlık İşleri il/ilçe müdürlüğü",
+      "slots": []
     }
   ]
 }

@@ -54,6 +54,21 @@ docker compose exec api python -m app.ingest status   # kaynakların son durumu
 - Giriş ekranı gösteren sayfalar (ör. e-Devlet hizmet sayfaları) ve çok kısa içerikler kaynak olarak kabul edilmez.
 - Veritabanına yazmadan bir adresin nasıl ayıklanacağını görmek için: `python -m app.ingest preview <URL>`
 
+## Yanıt üretimi
+
+API iki uç nokta sunar (servis anahtarıyla, yalnızca web uygulaması çağırır):
+
+- `POST /v1/understand`: metni MVP'deki işlemlerden birine sınıflandırır veya kapsam dışı olduğunu belirtir; eksik kritik bilgiler için en fazla 3 seçenekli soru döner.
+- `POST /v1/roadmap`: hibrit aramayla ilgili kaynak parçalarını getirir, LLM'den şemaya uygun yol haritası ister ve her adımı kaynağa karşı doğrular.
+
+Doğrulama kuralları: her adım ve uyarı, verilen bir kaynak parçasına kimlik ve birebir alıntıyla dayanmalıdır; dayanağı doğrulanamayan adım çıkarılır, kaynakta geçmeyen ücret gösterilmez, kaynak bağlantıları ve kontrol tarihleri veritabanından eklenir. Hiç doğrulanmış adım kalmazsa yol haritası yerine ilgili kuruma yönlendirme döner.
+
+Veritabanı olmadan uçtan uca deneme (gerçek LLM çağrısı yapar, `ANTHROPIC_API_KEY` gerekir):
+
+```bash
+cd services/api && python -m app.rag demo "Babamdan kalan arabayı üzerime almak istiyorum"
+```
+
 ## Testler
 
 ```bash

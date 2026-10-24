@@ -27,6 +27,15 @@ class Settings(BaseSettings):
     embedding_backend: Literal["bge", "fake"] = "bge"
     log_level: str = "info"
 
+    # LLM (sağlayıcıdan bağımsız katman, app/llm.py)
+    llm_provider: Literal["anthropic"] = "anthropic"
+    llm_model: str = "claude-opus-5-5"
+    llm_effort: Literal["low", "medium", "high", "xhigh", "max"] = "high"
+    # Güvenlik sınıflandırıcısı reddederse sunucu tarafında önerilen yedek modelle yeniden dene
+    llm_fallbacks: bool = True
+    llm_daily_request_limit: int = 2000
+    anthropic_api_key: str | None = None
+
     @field_validator("database_url")
     @classmethod
     def _use_psycopg_driver(cls, value: str | None) -> str | None:

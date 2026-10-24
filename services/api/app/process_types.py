@@ -4,13 +4,22 @@ from pathlib import Path
 
 from pydantic import BaseModel, Field
 
-from app.config import get_settings
+
+class Slot(BaseModel):
+    """Netleştirici soru. Yol haritasını değiştiren, kişisel veri içermeyen bir bilgi."""
+
+    key: str = Field(pattern=r"^[a-z_]+$")
+    question: str = Field(min_length=1)
+    options: list[str] = Field(min_length=2)
 
 
 class ProcessType(BaseModel):
     code: str = Field(pattern=r"^[a-z_]+$")
     name: str = Field(min_length=1)
     description: str = Field(min_length=1)
+    # Kaynak bulunamadığında kullanıcının yönlendirileceği kurum
+    referral: str = Field(min_length=1)
+    slots: list[Slot] = []
 
 
 def load_process_types(config_dir: Path) -> list[ProcessType]:
@@ -21,4 +30,10 @@ def load_process_types(config_dir: Path) -> list[ProcessType]:
 
 @lru_cache
 def get_process_types() -> tuple[ProcessType, ...]:
+    from app.config import get_settings
+
     return tuple(load_process_types(get_settings().config_dir))
+
+
+def get_process_type(code: str) -> ProcessType | None:
+    return next((p for p in get_process_types() if p.code == code), None)

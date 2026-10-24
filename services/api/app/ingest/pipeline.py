@@ -15,6 +15,7 @@ from app.ingest.extract import ExtractionError, extract
 from app.ingest.fetcher import FetchError, NotAllowedError, PoliteFetcher, RobotsDisallowedError
 from app.ingest.sources_config import SourceOptions, SourcesConfig
 from app.models import Chunk, IngestionLog, Source
+from app.text import turkish_lower
 
 logger = logging.getLogger(__name__)
 
@@ -263,9 +264,9 @@ class IngestionPipeline:
         )
 
     def _rejection_reason(self, text: str) -> str | None:
-        folded = text.casefold()
+        folded = turkish_lower(text)
         for pattern in self.config.reject_patterns:
-            if pattern.casefold() in folded:
+            if turkish_lower(pattern) in folded:
                 return f"reddedilen içerik kalıbı: {pattern!r}"
         if len(text) < MIN_CONTENT_CHARS:
             return f"içerik çok kısa ({len(text)} karakter)"
