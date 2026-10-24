@@ -1,11 +1,13 @@
 """Web uygulamasının çağırdığı soru anlama ve yol haritası uç noktaları."""
 
 import logging
+from functools import lru_cache
 from typing import Annotated, Literal
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, Field
 
+from app.config import get_settings
 from app.db import get_sessionmaker
 from app.embedding import get_embedder
 from app.llm import LLMError, LLMProvider, get_llm
@@ -24,11 +26,24 @@ TEXT_LIMIT = 2000
 Answers = Annotated[dict[str, Annotated[str, Field(max_length=200)]], Field(max_length=10)]
 
 
+@lru_cache
 def get_retriever() -> Retriever:
+    if get_settings().retriever_backend == "memory":
+        from app.rag.memory_retriever import InMemoryRetriever
+
+        return InMemoryRetriever()
     return HybridRetriever(get_sessionmaker(), get_embedder())
 
 
-LlmDep = Annotated[LLMProvider, Depends(get_llm)]
+def llm_dependency() -> LLMProvider:
+    """LLM yapılandırılmamışsa (ör. API anahtarı yok) 500 yerine anlaşılır bir 503 döner."""
+    try:
+        return get_llm()
+    except LLMError as exc:
+        raise _llm_unavailable(exc) from exc
+
+
+LlmDep = Annotated[LLMProvider, Depends(llm_dependency)]
 RetrieverDep = Annotated[Retriever, Depends(get_retriever)]
 
 

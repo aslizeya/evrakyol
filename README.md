@@ -39,6 +39,24 @@ npm run dev
 
 Web: http://localhost:3000
 
+### Docker olmadan hızlı deneme
+
+Veritabanı yerine kaynakları canlı çekip bellekte arayan yerel deneme kipi (yalnızca geliştirme içindir):
+
+1. `.env.example` dosyasını `.env` olarak kopyalayın.
+2. `.env` içinde `RETRIEVER_BACKEND=memory` yapın, `INTERNAL_API_TOKEN` için uzun ve rastgele bir değer girin, `ANTHROPIC_API_KEY` alanına kendi anahtarınızı yazın.
+3. Servisleri başlatın:
+
+```bash
+cd services/api && python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
+```
+
+```bash
+cd apps/web && npm run dev
+```
+
+Web uygulaması kök klasördeki `.env` dosyasını `scripts/next-with-root-env.mjs` üzerinden okur.
+
 ## Veri toplama ve indeksleme
 
 Kaynaklar ve izin verilen alan adları [config/sources.yaml](config/sources.yaml) dosyasında tutulur. Hat şu adımlardan oluşur: izin listesi kontrolü → robots.txt → sunucu başına en az 3 saniye arayla çekme → başlık yapısı korunarak ayıklama (HTML/PDF, mevzuatta madde bazında) → parçalama → `bge-m3` ile embedding → `kb` şemasına yazma.

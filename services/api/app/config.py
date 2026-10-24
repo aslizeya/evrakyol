@@ -25,6 +25,8 @@ class Settings(BaseSettings):
     embedding_dim: int = 1024
     # "fake": modelsiz deterministik vektörler (test ve hızlı deneme için)
     embedding_backend: Literal["bge", "fake"] = "bge"
+    # "memory": veritabanı olmadan, kaynakları canlı çekip bellekte arar (yalnızca yerel deneme)
+    retriever_backend: Literal["db", "memory"] = "db"
     log_level: str = "info"
 
     # LLM (sağlayıcıdan bağımsız katman, app/llm.py)

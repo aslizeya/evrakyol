@@ -1,13 +1,13 @@
 import "server-only";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@/generated/prisma/client";
-import { parseServerEnv } from "./env";
+import { parseDbEnv } from "./env";
 
 // Geliştirme ortamında hot reload her seferinde yeni bağlantı havuzu açmasın diye istemci global'de tutulur.
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
 
 function createClient() {
-  const { DATABASE_URL } = parseServerEnv(process.env);
+  const { DATABASE_URL } = parseDbEnv(process.env);
   return new PrismaClient({ adapter: new PrismaPg({ connectionString: DATABASE_URL }) });
 }
 

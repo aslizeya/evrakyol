@@ -12,7 +12,8 @@ def get_engine() -> Engine:
     url = get_settings().database_url
     if not url:
         raise RuntimeError("DATABASE_URL tanımlı değil")
-    return create_engine(url, pool_pre_ping=True)
+    # Kısa bağlantı zaman aşımı: veritabanı yoksa istekler (ör. /health) uzun süre asılı kalmasın.
+    return create_engine(url, pool_pre_ping=True, connect_args={"connect_timeout": 3})
 
 
 def get_session() -> Iterator[Session]:

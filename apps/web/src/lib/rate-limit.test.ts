@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { clientKey, MemoryRateLimiter } from "./rate-limit";
+import { clientKey, FallbackRateLimiter, MemoryRateLimiter, type RateLimiter } from "./rate-limit";
 
 describe("MemoryRateLimiter", () => {
   it("pencere içinde sınırı uygular, pencere bitince sıfırlar", async () => {
@@ -26,5 +26,14 @@ describe("clientKey", () => {
     const request = new Request("http://x", { headers: { "x-forwarded-for": "1.1.1.1, 2.2.2.2" } });
     expect(clientKey(request)).toBe("1.1.1.1");
     expect(clientKey(new Request("http://x"))).toBe("yerel");
+  });
+});
+
+describe("FallbackRateLimiter", () => {
+  it("birincil sınırlayıcı hata verirse yedekle sınırlamaya devam eder", async () => {
+    const broken: RateLimiter = { hit: async () => Promise.reject(new Error("ECONNREFUSED")) };
+    const limiter = new FallbackRateLimiter(broken, new MemoryRateLimiter(() => 0));
+    expect((await limiter.hit("k", 1, 60)).allowed).toBe(true);
+    expect((await limiter.hit("k", 1, 60)).allowed).toBe(false);
   });
 });

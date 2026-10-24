@@ -1,6 +1,6 @@
 import "server-only";
 import type { z } from "zod";
-import { parseServerEnv } from "./env";
+import { parseApiEnv } from "./env";
 
 // Yapay zekâ servisine sunucu tarafından yapılan çağrılar. Servis anahtarı tarayıcıya hiç ulaşmaz.
 
@@ -15,7 +15,7 @@ export async function callApi<T>(
   schema: z.ZodType<T>,
   { timeoutMs = 150_000 }: { timeoutMs?: number } = {},
 ): Promise<ApiResult<T>> {
-  const env = parseServerEnv(process.env);
+  const env = parseApiEnv(process.env);
   if (!env.INTERNAL_API_TOKEN) {
     return { ok: false, status: 503, detail: "Servis yapılandırılmamış." };
   }

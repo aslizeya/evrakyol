@@ -7,9 +7,9 @@ import pytest
 from fastapi.testclient import TestClient
 from rag_fixtures import CHUNKS, GOOD_STEPS, FakeRetriever, roadmap_json
 
-from app.api_v1 import get_retriever
+from app.api_v1 import get_retriever, llm_dependency
 from app.config import Settings, get_settings
-from app.llm import FakeProvider, LLMError, get_llm
+from app.llm import FakeProvider, LLMError
 from app.main import app
 
 AUTH = {"Authorization": "Bearer test-anahtari"}
@@ -22,7 +22,7 @@ def setup() -> Iterator[tuple[TestClient, dict]]:
         internal_api_token="test-anahtari",  # noqa: S106
         _env_file=None,  # type: ignore[call-arg]
     )
-    app.dependency_overrides[get_llm] = lambda: state["llm"]
+    app.dependency_overrides[llm_dependency] = lambda: state["llm"]
     app.dependency_overrides[get_retriever] = lambda: state["retriever"]
     yield TestClient(app), state
     app.dependency_overrides.clear()
@@ -126,3 +126,16 @@ def test_unknown_process_code(setup) -> None:
         "/v1/roadmap", json={"text": "aracı almak", "process_code": "uydurma"}, headers=AUTH
     )
     assert response.status_code == 422
+
+
+def test_missing_llm_configuration_is_503_not_500(setup, monkeypatch) -> None:
+    client, _ = setup
+    del app.dependency_overrides[llm_dependency]
+
+    def not_configured():
+        raise LLMError("not_configured", "ANTHROPIC_API_KEY tanımlı değil")
+
+    monkeypatch.setattr("app.api_v1.get_llm", not_configured)
+    response = client.post("/v1/understand", json={"text": "aracı almak"}, headers=AUTH)
+    assert response.status_code == 503
+    assert "ANTHROPIC_API_KEY" not in response.text  # yapılandırma ayrıntısı kullanıcıya sızmaz

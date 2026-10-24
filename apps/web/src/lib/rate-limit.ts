@@ -42,14 +42,45 @@ export class RedisRateLimiter implements RateLimiter {
   }
 }
 
+/** Birincil sınırlayıcı (Redis) hata verirse bellek içi sınırlayıcıyla devam eder; site çökmez. */
+export class FallbackRateLimiter implements RateLimiter {
+  private warned = false;
+
+  constructor(
+    private primary: RateLimiter,
+    private fallback: RateLimiter,
+  ) {}
+
+  async hit(key: string, limit: number, windowSeconds: number): Promise<RateLimitResult> {
+    try {
+      return await this.primary.hit(key, limit, windowSeconds);
+    } catch {
+      if (!this.warned) {
+        this.warned = true;
+        console.warn("Hız sınırı: Redis'e ulaşılamadı, bellek içi sınırlamaya geçildi.");
+      }
+      return this.fallback.hit(key, limit, windowSeconds);
+    }
+  }
+}
+
 let limiter: RateLimiter | undefined;
 
 export function getRateLimiter(): RateLimiter {
   if (!limiter) {
     const url = process.env.REDIS_URL;
-    limiter = url
-      ? new RedisRateLimiter(new Redis(url, { maxRetriesPerRequest: 1, lazyConnect: false }))
-      : new MemoryRateLimiter();
+    if (!url) {
+      limiter = new MemoryRateLimiter();
+    } else {
+      // Bağlantı yoksa komutlar kuyrukta beklemez, hemen hata verir (yedek devreye girer).
+      const redis = new Redis(url, {
+        maxRetriesPerRequest: 1,
+        enableOfflineQueue: false,
+        connectTimeout: 2000,
+      });
+      redis.on("error", () => {}); // Bağlantı hataları FallbackRateLimiter'da ele alınır.
+      limiter = new FallbackRateLimiter(new RedisRateLimiter(redis), new MemoryRateLimiter());
+    }
   }
   return limiter;
 }
