@@ -101,9 +101,9 @@
 ## Açık konular
 
 - **Araçların Satış, Devir ve Tescil Hizmetlerinin Yürütülmesi Hakkında Yönetmelik** henüz kaynak listesinde değil: Mevzuat Bilgi Sistemi'ndeki numarası güvenilir şekilde doğrulanamadı. Numara doğrulanınca `config/sources.yaml`'a eklenecek.
-- **mevzuat.gov.tr geliştirme bilgisayarından erişilemiyor** (bağlantı zaman aşımı; site başka ağlardan açılıyor). Mevzuat kaynakları yayın ortamından (Railway) ilk çalıştırmada doğrulanacak.
+- **mevzuat.gov.tr metinleri alınamıyor:** Site, `EvrakyolBot` kimliğiyle yapılan isteklere yanıt vermiyor; tarayıcı kimliğiyle açılıyor. Resmî Gazete de bot kimliğine yanıt vermiyor. Bot koruması kimlik gizlenerek aşılmayacak, bu kaynaklar atlanıyor. Metinlerin proje sahibi tarafından indirilmesi veya kurumdan izin istenmesi değerlendirilecek.
 - **Değerlendirme setinin doğrulanması:** `eval/VAKALAR.md` içindeki 23 beklenen unsur ve 92 vaka proje sahibinin onayını bekliyor. İlk ücretli çalıştırma için API anahtarı ve (yayın metrikleri için) indekslenmiş veritabanı gerekiyor.
-- **Netleştirici soruların onayı:** Miras yoluyla araç devri (4 soru) ve mirasçılık belgesi (3 soru) için yazılan soru metinleri ve seçenekleri proje sahibinin onayını bekliyor.
-- **EGM "Trafik Tescil Hakkında" sayfasının güncelliği:** Sayfa trafik tescil kuruluşunu başvuru yeri olarak gösteriyor; 2018'den beri araç satış/devir işlemleri noterlikte de yapılıyor. Kaynaklar arası olası çelişkiler 3. aşamada yanıtta uyarı olarak gösterilecek.
+- **Soruların ve rehber içeriğinin onayı:** 6 rehberin soru metinleri ve seçenekleri (araç devri 8, mirasçılık belgesi 5, pasaport 5, kimlik kartı 3, yerleşim yeri belgesi 3, ehliyet 2 soru) ile `config/rehber/` içerikleri proje sahibinin onayını bekliyor.
+- **EGM "Trafik Tescil Hakkında" sayfasının güncelliği:** Sayfa trafik tescil kuruluşunu başvuru yeri olarak gösteriyor; 2018'den beri araç satış/devir işlemleri noterlikte de yapılıyor. Araç devri rehberi bu sayfaya dayanıyor ve bu konuya özel bir uyarı içermiyor; yalnızca genel teyit uyarısı gösteriliyor. Gerçek kullanıcılara açılmadan önce ilgili kurumdan netleştirilmeli.
 
 - **Giriş yapmamış kullanıcıların geri bildirimi:** Veri modelinde geri bildirim kayıtlı bir işleme (`user_processes`) bağlı. Giriş yapmadan yol haritası gören kullanıcıların da geri bildirim verebilmesi isteniyorsa 7. aşamada model genişletilmeli. Proje sahibinin kararı bekleniyor.

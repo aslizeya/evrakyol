@@ -8,13 +8,13 @@ Resmi işlemler için yalnızca resmi kaynaklara dayanan, her adımın kaynağı
 
 ## Depo yapısı
 
-| Klasör         | İçerik                                                              |
-| -------------- | ------------------------------------------------------------------- |
-| `apps/web`     | Next.js web uygulaması (arayüz, kimlik doğrulama, kayıtlı işlemler) |
-| `services/api` | FastAPI yapay zekâ servisi (veri toplama, indeksleme, RAG)          |
-| `config`       | Ortak yapılandırma (işlem türleri, kaynak izin listesi)             |
-| `eval`         | Değerlendirme seti ve raporları                                     |
-| `docs`         | Karar kaydı ve teknik notlar                                        |
+| Klasör         | İçerik                                                                                                                     |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `apps/web`     | Next.js web uygulaması (arayüz, API vekil uçları). Hesap ve kayıtlı işlem tabloları tanımlıdır; bu özellikler henüz yoktur |
+| `services/api` | FastAPI servisi (sorularla ilerleyen rehber, veri toplama, indeksleme, RAG)                                                |
+| `config`       | Ortak yapılandırma (işlem türleri, kaynak izin listesi, rehber içerikleri)                                                 |
+| `eval`         | Değerlendirme seti ve raporları                                                                                            |
+| `docs`         | Karar kaydı ve teknik notlar                                                                                               |
 
 ## Yerel kurulum
 
